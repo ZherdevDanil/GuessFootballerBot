@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 //import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -38,48 +39,59 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
 
     @Override
     public void onUpdateReceived(@NotNull Update update) {
-        if(update.hasMessage() && update.getMessage().hasText()){
-            String messageText = update.getMessage().getText();
+        if(update.hasMessage()){
             Long chatId = update.getMessage().getChatId();
             String Username = update.getMessage().getFrom().getFirstName();
 
-
-            switch (messageText){
-                case "/start":
-                    try {
-                        startbot(chatId, Username);
-                    } catch (TelegramApiException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                case "/help":
-                    try {
-                        sendrules(chatId);
-                    }catch (TelegramApiException e){
-                        throw new RuntimeException(e);
-                    }
-                    break;
-
-                case "/possiblefootballer":
-                    try {
-                        sendDoc(chatId ,new File("C:\\GuessFootballerBot\\footballerhelp.txt") , "Список можливих футболістів");
-                    } catch (TelegramApiException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                default:
-                    try {
-                        defaultmessage(chatId);
-                    } catch (TelegramApiException e) {
-                        throw new RuntimeException(e);
-                    }
-                    //System.out.println("Не знаю що написано");
-                    break;
+            if(update.getMessage().hasText()){
+                String messageText = update.getMessage().getText();
+                commandReaction(messageText , chatId , Username);
 
             }
+        }else if (update.hasCallbackQuery()) {
+            String messageText = update.getMessage().getText();
+            Long chatId = update.getCallbackQuery().getMessage().getChatId();
+            String Username = update.getMessage().getFrom().getFirstName();
+            commandReaction(messageText , chatId , Username);
+
         }
     }
 
+    public void commandReaction(String messageText ,Long chatId , String Username ) {
+        switch (messageText) {
+            case "/start":
+                try {
+                    startbot(chatId, Username);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            case "/help":
+                try {
+                    sendrules(chatId);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+
+            case "/possiblefootballer":
+                try {
+                    sendDoc(chatId, new File("C:\\GuessFootballerBot\\footballerhelp.txt"), "Список можливих футболістів");
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            default:
+                try {
+                    defaultmessage(chatId);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                //System.out.println("Не знаю що написано");
+                break;
+
+        }
+    }
     public void startbot(Long chatid , String UserName) throws TelegramApiException {
         SendMessage message = new SendMessage();
 
