@@ -12,8 +12,12 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class BotFunctionality extends TelegramLongPollingBot implements Commands {
@@ -62,18 +66,11 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             case "/start":
                 try {
                     startbot(chatId, Username);
+                    startkeyboard(chatId , messageText);
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }
                 break;
-            case "/help":
-                try {
-                    sendrules(chatId);
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-
             case "/possiblefootballer":
                 try {
                     sendDoc(chatId, new File("C:\\GuessFootballerBot\\footballerhelp.txt"), "Список можливих футболістів");
@@ -81,6 +78,28 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                     throw new RuntimeException(e);
                 }
                 break;
+            case "/play":
+                SendMessage message = new SendMessage();
+                message.setChatId(chatId);
+                message.setText("WEEE PLAAYYYING LESSSGGOOO");
+                try {
+                    execute(message);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+
+            case "/help":
+            case "help"  :
+                try {
+                    sendrules(chatId);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            case "play":
+                break;
+
             default:
                 try {
                     defaultmessage(chatId);
@@ -89,6 +108,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                 }
                 //System.out.println("Не знаю що написано");
                 break;
+
 
         }
     }
@@ -134,6 +154,43 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             execute(message);
     }
 
+    public void startkeyboard(Long chatId ,String messageText ){
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(messageText);
 
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        keyboardMarkup.setResizeKeyboard(true);
+
+        List<KeyboardRow> keyboardRows = new ArrayList<>();
+
+        KeyboardRow row = new KeyboardRow();
+
+        row.add("help");
+        row.add("play");
+
+        keyboardRows.add(row);
+/*
+        row = new KeyboardRow();
+
+        row.add("register");
+        row.add("check my data");
+        row.add("delete my data");
+
+        keyboardRows.add(row);
+*/
+        keyboardMarkup.setKeyboard(keyboardRows);
+
+        message.setReplyMarkup(keyboardMarkup);
+
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
+
+
+
