@@ -1,7 +1,14 @@
 package com.example.GuessFootballerBot.Controller;
 
 import com.example.GuessFootballerBot.Config.BotConfiguration;
+import com.example.GuessFootballerBot.Model.Footballer;
+import com.example.GuessFootballerBot.Model.FootballerRepository;
+import com.example.GuessFootballerBot.Model.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import jakarta.validation.constraints.NotNull;
+import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -9,13 +16,13 @@ import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 //import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +30,13 @@ import java.util.List;
 public class BotFunctionality extends TelegramLongPollingBot implements Commands {
     BotConfiguration configuration;
 
-    public BotFunctionality (BotConfiguration configuration){
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private FootballerRepository footballerRepository;
+
+    public BotFunctionality (BotConfiguration configuration) throws IOException {
         this.configuration = configuration;
         try {
             this.execute(new SetMyCommands(commands , new BotCommandScopeDefault(),null ));
@@ -61,15 +74,14 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         }
     }
 
-    public void commandReaction(String messageText ,Long chatId , String Username ) {
+
+    @SneakyThrows
+    public void commandReaction(String messageText , Long chatId , String Username )  {
         switch (messageText) {
             case "/start":
-                try {
-                    startbot(chatId, Username);
-                    startkeyboard(chatId , messageText);
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
-                }
+                    import_json_in_db();
+                    //startbot(chatId, Username);
+                    startkeyboard(chatId , hellophrase(Username));
                 break;
             case "/possiblefootballer":
                 try {
@@ -78,10 +90,31 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                     throw new RuntimeException(e);
                 }
                 break;
+
+
+
+            case "/help":
+            case "help" :
+                try {
+                    sendrules(chatId);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
             case "/play":
+            case "play":
+
+                startplaykeyboard(chatId , "Оберіть, що перше ви хочете вивести");
+
                 SendMessage message = new SendMessage();
                 message.setChatId(chatId);
-                message.setText("WEEE PLAAYYYING LESSSGGOOO");
+                message.setText("1.Позиція гравця\n" +
+                        "2.Чи грає він досі\n" +
+                        "3.Національність\n" +
+                        "4.Ім'я\n" +
+                        "5.Прізвище\n" +
+                        "6.Всі клуби\n" +
+                        "7.Перший клуб\n");
                 try {
                     execute(message);
                 } catch (TelegramApiException e) {
@@ -89,17 +122,30 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                 }
                 break;
 
-            case "/help":
-            case "help"  :
-                try {
-                    sendrules(chatId);
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
-                }
+            case "1":
+            case "/1":
                 break;
-            case "play":
+            case "2":
+            case "/2":
                 break;
-
+            case "3":
+            case "/3":
+                break;
+            case "4":
+            case "/4":
+                break;
+            case "5":
+            case "/5":
+                break;
+            case "6":
+            case "/6":
+                break;
+            case "7":
+            case "/7":
+                break;
+            case "8":
+            case "/8":
+                break;
             default:
                 try {
                     defaultmessage(chatId);
@@ -112,6 +158,12 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
 
         }
     }
+
+    public String hellophrase(String UserName){
+        return "Привіт " + UserName + " Я телеграм бот GuessFootballer , і якщо тобі нічим зайнятися, я сподіваюся ти добре проведеш тут час";
+    }
+
+    /*
     public void startbot(Long chatid , String UserName) throws TelegramApiException {
         SendMessage message = new SendMessage();
 
@@ -119,6 +171,8 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         message.setText("Привіт " + UserName + " Я телеграм бот GuessFootballer , і якщо тобі нічим зайнятися, я сподіваюся що ти добре проведеш тут час");
         execute(message);
     }
+
+     */
 
     public void defaultmessage(Long chatid ) throws TelegramApiException {
         SendMessage message = new SendMessage();
@@ -154,10 +208,10 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             execute(message);
     }
 
-    public void startkeyboard(Long chatId ,String messageText ){
+    public void startkeyboard(Long chatId , String MessageText ){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
-        message.setText(messageText);
+        message.setText(MessageText);
 
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         keyboardMarkup.setResizeKeyboard(true);
@@ -182,12 +236,60 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         keyboardMarkup.setKeyboard(keyboardRows);
 
         message.setReplyMarkup(keyboardMarkup);
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+
+
+    }
+
+    public void startplaykeyboard(Long chatId , String messageText ){
+        SendMessage message = new SendMessage();
+        message.setChatId(String.valueOf(chatId));
+        message.setText(messageText);
+        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        keyboardMarkup.setResizeKeyboard(true);
+        List<KeyboardRow> keyboardRows = new ArrayList<>();
+
+        KeyboardRow row = new KeyboardRow();
+
+        row.add("1");
+        row.add("2");
+        row.add("3");
+
+        keyboardRows.add(row);
+
+        row = new KeyboardRow();
+
+        row.add("4");
+        row.add("5");
+        row.add("6");
+        row.add("7");
+        keyboardRows.add(row);
+
+        keyboardMarkup.setKeyboard(keyboardRows);
+
+        message.setReplyMarkup(keyboardMarkup);
 
         try {
             execute(message);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    public void import_json_in_db() throws IOException {
+        if (footballerRepository.count() == 0){
+            ObjectMapper objectMapper = new ObjectMapper();
+            TypeFactory typeFactory = objectMapper.getTypeFactory();
+            List<Footballer> allfootballers = objectMapper.readValue(new File("C:\\GuessFootballerBot\\footballer_data.json"),
+            typeFactory.constructCollectionType(List.class, Footballer.class));
+            footballerRepository.saveAll(allfootballers);
+        }
+
     }
 
 }

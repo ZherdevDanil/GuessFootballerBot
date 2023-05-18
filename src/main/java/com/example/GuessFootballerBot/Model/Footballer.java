@@ -2,11 +2,11 @@ package com.example.GuessFootballerBot.Model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @Entity(name = "FootballerDb")
 public class Footballer {
     @Id
