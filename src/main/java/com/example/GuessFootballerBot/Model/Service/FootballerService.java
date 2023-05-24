@@ -29,4 +29,8 @@ public class FootballerService {
         return footballerRepository.findById(randomId);
     }
 
+    public String getByName(Integer randomId){
+        return footballerRepository.getByName(randomId);
+    }
+
 }

@@ -115,6 +115,8 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                 break;
             case "/play":
             case "play":
+                getFootballer(chatId);
+                //int footballerRandomId = genereateRandomFootballerId();
                 //saveuser(chatId , Username , 0);
                 saveOrUpdateUser(chatId , Username , 0);
                 startplaykeyboard(chatId , "Оберіть, що перше ви хочете вивести");
@@ -137,13 +139,14 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             break;
             case "1":
             case "/1":
-                getFootballer(chatId);
+                getFootballerName(chatId,getFootballer(chatId));
                 break;
             case "2":
             case "/2":
                 break;
             case "3":
             case "/3":
+
                 break;
             case "4":
             case "/4":
@@ -260,7 +263,6 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
     }
 
 
-
     public void startplaykeyboard(Long chatId , String messageText ){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -313,14 +315,19 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
     }
 
 
+    public int genereateRandomFootballerId(){
+        Random random = new Random();
+        int randomFootballerId = random.nextInt((FOOTBALLERS_COUNT)+1);
+        return randomFootballerId;
+    }
 
 
-    public void getFootballer(Long chatId){
+    public Optional<Footballer> getFootballer(Long chatId){
         Optional<Footballer> footballer;
         SendMessage message = new SendMessage();
-        Random random = new Random();
-        Integer randomFootballerId = random.nextInt((FOOTBALLERS_COUNT)+1);
-        footballer = footballerService.findById(randomFootballerId);
+        footballer = footballerService.findById(genereateRandomFootballerId());
+        System.out.println(footballer);
+        /*
         message.setChatId(chatId);
         message.setText(String.valueOf(footballer));
         try {
@@ -328,9 +335,29 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
+        */
 
+        return footballer;
+    }
+
+    public void getFootballerName(Long chatId , Optional<Footballer> footballer){
+        Footballer footballer1;
+        footballer1 = footballer.get();
+        String footballername = footballer1.getName();
+        //String footballername = footballer;
+        SendMessage message = new SendMessage();
+        //footballerService.getByName(genereateRandomFootballerId());
+        message.setChatId(chatId);
+        message.setText(footballername);
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
 
     }
+
+
 
 
     public void import_json_in_db() throws IOException {
