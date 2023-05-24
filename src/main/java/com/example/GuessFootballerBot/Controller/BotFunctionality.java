@@ -29,9 +29,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class BotFunctionality extends TelegramLongPollingBot implements Commands {
+    @Autowired
     BotConfiguration configuration;
     @Autowired
     FootballerService footballerService;
@@ -110,7 +112,8 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                 break;
             case "/play":
             case "play":
-                saveuser(chatId , Username , 0);
+                //saveuser(chatId , Username , 0);
+                saveOrUpdateUser(chatId , Username , 0);
                 startplaykeyboard(chatId , "Оберіть, що перше ви хочете вивести");
 
                 SendMessage message = new SendMessage();
@@ -287,13 +290,22 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         }
     }
 
-    public void saveuser(Long chatId , String Username , Integer points){
-            User user = new User();
-            user.setChatId(chatId);
-            user.setUserName(Username);
-            user.setPoints(points);
+    public void saveOrUpdateUser(Long chatId , String userName , Integer points){
+        //Optional<User> userOptional = userService.findByChatId(chatId);
+        if (userService.existsByChatId(chatId)) {
+            User user = userService.findByChatId(chatId);
+            //User user = userOptional.get();
+            user.setPoints(user.getPoints() + 20);
             userService.save(user);
+        } else {
+            User newUser = new User();
+            newUser.setChatId(chatId);
+            newUser.setUserName(userName);
+            newUser.setPoints(points);
+            userService.save(newUser);
+        }
     }
+
 
     public void import_json_in_db() throws IOException {
         if (footballerService.count() == 0){

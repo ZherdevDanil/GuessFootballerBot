@@ -11,9 +11,9 @@ import java.util.List;
 
 @Repository
 public interface FootballerRepository extends CrudRepository<Footballer , Integer> {
-    /*
+    /*Запускаєтся*/
     @Query("SELECT f FROM FootballerDb f WHERE f.country = :country")
     List<Footballer> findByCountry(@Param("country") String country);
 
-     */
+
 }
