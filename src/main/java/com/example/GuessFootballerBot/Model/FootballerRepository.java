@@ -10,16 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface FootballerRepository extends CrudRepository<Footballer , Integer> {
-    /*Запускаєтся*/
-    /*
-    @Query("SELECT f FROM FootballerDb f WHERE f.country = :country")
-    List<Footballer> findByCountry(@Param("country") String country);
-    */
-
-
+    @Override
     Optional<Footballer> findById(Integer randomId);
-
-    @Query("SELECT f.name FROM FootballerDb f WHERE f.id = :randomId")
-    String getByName(@Param("randomId") Integer randomId);
-
 }
