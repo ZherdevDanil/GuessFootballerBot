@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FootballerService {
@@ -22,6 +23,10 @@ public class FootballerService {
 
     public Iterable<Footballer> saveAll(List<Footballer> footballers) {
         return footballerRepository.saveAll(footballers);
+    }
+
+    public Optional<Footballer> findById(Integer randomId){
+        return footballerRepository.findById(randomId);
     }
 
 }

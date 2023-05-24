@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Component
 public class BotFunctionality extends TelegramLongPollingBot implements Commands {
@@ -39,6 +40,8 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
     FootballerService footballerService;
     @Autowired
     UserService userService;
+
+    private static final int FOOTBALLERS_COUNT = 51;
 
     public BotFunctionality (BotConfiguration configuration) throws IOException {
         this.configuration = configuration;
@@ -134,6 +137,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             break;
             case "1":
             case "/1":
+                getFootballer(chatId);
                 break;
             case "2":
             case "/2":
@@ -255,6 +259,8 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
 
     }
 
+
+
     public void startplaykeyboard(Long chatId , String messageText ){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -304,6 +310,26 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             newUser.setPoints(points);
             userService.save(newUser);
         }
+    }
+
+
+
+
+    public void getFootballer(Long chatId){
+        Optional<Footballer> footballer;
+        SendMessage message = new SendMessage();
+        Random random = new Random();
+        Integer randomFootballerId = random.nextInt((FOOTBALLERS_COUNT)+1);
+        footballer = footballerService.findById(randomFootballerId);
+        message.setChatId(chatId);
+        message.setText(String.valueOf(footballer));
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
 
