@@ -13,19 +13,12 @@ public class FootballerService {
     @Autowired
     private FootballerRepository footballerRepository;
 
-    public void save(Footballer footballer){
-        footballerRepository.save(footballer);
-
+    public long count(){
+        return footballerRepository.count();
     }
 
-
-    public void existbyid(Footballer footballer){
+    public Iterable<Footballer> saveAll(List<Footballer> footballers) {
+        return footballerRepository.saveAll(footballers);
     }
-
-
-    //public List<Footballer>
-
-
-
 
 }

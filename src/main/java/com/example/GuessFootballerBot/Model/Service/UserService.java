@@ -1,6 +1,7 @@
 package com.example.GuessFootballerBot.Model.Service;
 
 
+import com.example.GuessFootballerBot.Model.User;
 import com.example.GuessFootballerBot.Model.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,5 +11,17 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public void save(User user){
+        userRepository.save(user);
+    }
+
+    public User userInTable(Long chatId){
+        return userRepository.findbyChatId(chatId);
+    }
+
+
+    public boolean existsByChatId(Long chatId) {
+        return userRepository.existsByChatId(chatId);
+    }
 
 }

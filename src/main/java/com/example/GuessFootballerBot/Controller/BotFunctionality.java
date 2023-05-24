@@ -3,6 +3,9 @@ package com.example.GuessFootballerBot.Controller;
 import com.example.GuessFootballerBot.Config.BotConfiguration;
 import com.example.GuessFootballerBot.Model.Footballer;
 import com.example.GuessFootballerBot.Model.FootballerRepository;
+import com.example.GuessFootballerBot.Model.Service.FootballerService;
+import com.example.GuessFootballerBot.Model.Service.UserService;
+import com.example.GuessFootballerBot.Model.User;
 import com.example.GuessFootballerBot.Model.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -31,10 +34,9 @@ import java.util.List;
 public class BotFunctionality extends TelegramLongPollingBot implements Commands {
     BotConfiguration configuration;
     @Autowired
-    private UserRepository userRepository;
-
+    FootballerService footballerService;
     @Autowired
-    private FootballerRepository footballerRepository;
+    UserService userService;
 
     public BotFunctionality (BotConfiguration configuration) throws IOException {
         this.configuration = configuration;
@@ -43,7 +45,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
-        this.userRepository = userRepository;
+
     }
     @Override
     public String getBotUsername() {
@@ -61,10 +63,25 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             Long chatId = update.getMessage().getChatId();
             String Username = update.getMessage().getFrom().getFirstName();
 
+
             if(update.getMessage().hasText()){
                 String messageText = update.getMessage().getText();
                 commandReaction(messageText , chatId , Username);
-
+                if (!userService.existsByChatId(chatId)) {
+                    User user = new User();
+                    user.setChatId(chatId);
+                    user.setUserName(Username);
+                    userService.save(user);
+                }else {
+                    SendMessage message = new SendMessage();
+                    message.setChatId(chatId);
+                    message.setText("Ви вже в таблиці");
+                    try {
+                        execute(message);
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
         }else if (update.hasCallbackQuery()) {
             String messageText = update.getMessage().getText();
@@ -287,12 +304,12 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
 
 
     public void import_json_in_db() throws IOException {
-        if (footballerRepository.count() == 0){
+        if (footballerService.count() == 0){
             ObjectMapper objectMapper = new ObjectMapper();
             TypeFactory typeFactory = objectMapper.getTypeFactory();
             List<Footballer> allfootballers = objectMapper.readValue(new File("C:\\GuessFootballerBot\\footballer_data.json"),
             typeFactory.constructCollectionType(List.class, Footballer.class));
-            footballerRepository.saveAll(allfootballers);
+            footballerService.saveAll(allfootballers);
         }
 
     }
