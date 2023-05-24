@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ###GuessFootballerBot###
-/GuessFootballerBot/src/main/resources/application.properties
+/src/main/resources/
