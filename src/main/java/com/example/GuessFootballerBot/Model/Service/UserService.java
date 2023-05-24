@@ -8,20 +8,23 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+    private final UserRepository userRepository;
     @Autowired
-    private UserRepository userRepository;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public void save(User user){
         userRepository.save(user);
     }
-
+    /*
     public User userInTable(Long chatId){
         return userRepository.findbyChatId(chatId);
-    }
+    }*/
 
-
+    /*
     public boolean existsByChatId(Long chatId) {
         return userRepository.existsByChatId(chatId);
-    }
+    }*/
 
 }

@@ -67,21 +67,6 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             if(update.getMessage().hasText()){
                 String messageText = update.getMessage().getText();
                 commandReaction(messageText , chatId , Username);
-                if (!userService.existsByChatId(chatId)) {
-                    User user = new User();
-                    user.setChatId(chatId);
-                    user.setUserName(Username);
-                    userService.save(user);
-                }else {
-                    SendMessage message = new SendMessage();
-                    message.setChatId(chatId);
-                    message.setText("Ви вже в таблиці");
-                    try {
-                        execute(message);
-                    } catch (TelegramApiException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
             }
         }else if (update.hasCallbackQuery()) {
             String messageText = update.getMessage().getText();
@@ -125,7 +110,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                 break;
             case "/play":
             case "play":
-
+                saveuser(chatId , Username , 0);
                 startplaykeyboard(chatId , "Оберіть, що перше ви хочете вивести");
 
                 SendMessage message = new SendMessage();
@@ -142,8 +127,8 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                 } catch (TelegramApiException e) {
                     throw new RuntimeException(e);
                 }
-                break;
 
+            break;
             case "1":
             case "/1":
                 break;
@@ -302,6 +287,13 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         }
     }
 
+    public void saveuser(Long chatId , String Username , Integer points){
+            User user = new User();
+            user.setChatId(chatId);
+            user.setUserName(Username);
+            user.setPoints(points);
+            userService.save(user);
+    }
 
     public void import_json_in_db() throws IOException {
         if (footballerService.count() == 0){

@@ -10,8 +10,11 @@ import java.util.List;
 @Service
 public class FootballerService {
 
+    private final FootballerRepository footballerRepository;
     @Autowired
-    private FootballerRepository footballerRepository;
+    public FootballerService(FootballerRepository footballerRepository) {
+        this.footballerRepository = footballerRepository;
+    }
 
     public long count(){
         return footballerRepository.count();
