@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Data
 @Entity(name = "FootballerDb")
-public class Footballer {
+public class Footballer{
     @Id
     private int id;
     private String name;

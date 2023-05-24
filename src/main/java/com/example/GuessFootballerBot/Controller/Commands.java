@@ -1,9 +1,9 @@
 package com.example.GuessFootballerBot.Controller;
 
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 
 import java.util.List;
-
 public interface Commands {
     List<BotCommand> commands = List.of(
             new BotCommand("/start" , "start bot"),

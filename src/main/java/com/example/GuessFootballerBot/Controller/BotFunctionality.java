@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import jakarta.validation.constraints.NotNull;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -29,7 +30,6 @@ import java.util.List;
 @Component
 public class BotFunctionality extends TelegramLongPollingBot implements Commands {
     BotConfiguration configuration;
-
     @Autowired
     private UserRepository userRepository;
 
@@ -43,6 +43,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
+        this.userRepository = userRepository;
     }
     @Override
     public String getBotUsername() {
@@ -75,12 +76,16 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
     }
 
 
-    @SneakyThrows
+
     public void commandReaction(String messageText , Long chatId , String Username )  {
         switch (messageText) {
             case "/start":
+                try {
                     import_json_in_db();
-                    //startbot(chatId, Username);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                //startbot(chatId, Username);
                     startkeyboard(chatId , hellophrase(Username));
                 break;
             case "/possiblefootballer":
