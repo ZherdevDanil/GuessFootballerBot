@@ -43,7 +43,6 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
     private Footballer currentFootballer;
 
 
-
     private static final int FOOTBALLERS_COUNT = 51;
 
     public BotFunctionality (BotConfiguration configuration) throws IOException {
@@ -88,6 +87,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
 
 
     public void commandReaction(String messageText , Long chatId , String Username )  {
+        String currentFootballerFullName = getFootballerFullName(chatId , currentFootballer);
         switch (messageText) {
             case "/start":
                 try {
@@ -104,9 +104,6 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                     throw new RuntimeException(e);
                 }
                 break;
-
-
-
             case "/help":
             case "help" :
                 try {
@@ -139,6 +136,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             break;
             case "1":
             case "/1":
+
                 getFootballerPosition(chatId,currentFootballer);
                 break;
             case "2":
@@ -337,11 +335,26 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         System.out.println(currentFootballer);
     }
 
-    public void getFootballerName(Long chatId , Footballer currentfootballer){
-        String footballername = currentfootballer.getName();
+
+    public String getFootballerFullName(Long chatId , Footballer currentFootballer){
+        String currentfootballerFullname = currentFootballer.getFullname();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText(footballername);
+        message.setText(currentfootballerFullname);
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+        return currentfootballerFullname;
+
+    }
+
+    public void getFootballerName(Long chatId , Footballer currentFootballer){
+        String currentFootballerName = currentFootballer.getName();
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText(currentFootballerName);
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -349,61 +362,11 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         }
 
     }
-    public void getFootballerPosition(Long chatId , Footballer currentfootballer){
-        String footballername = currentfootballer.getPosition();
+    public void getFootballerPosition(Long chatId , Footballer currentFootballer){
+        String currentFootballerPosition = currentFootballer.getPosition();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText(footballername);
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    public void getFootballerStillPlay(Long chatId , Footballer currentfootballer){
-        String footballername = currentfootballer.getStillplay();
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText(footballername);
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    public void getFootballerCountry(Long chatId , Footballer currentfootballer){
-        String footballername = currentfootballer.getCountry();
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText(footballername);
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-    public void getFootballerSurname(Long chatId , Footballer currentfootballer){
-        String footballername = currentfootballer.getSurname();
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText(footballername);
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-    public void getFootballerClubs(Long chatId , Footballer currentfootballer){
-        String footballername = currentfootballer.getClubs();
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText(footballername);
+        message.setText(currentFootballerPosition);
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -412,11 +375,11 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
 
     }
 
-    public void getFootballerClubs1(Long chatId , Footballer currentfootballer){
-        String footballername = currentfootballer.getClubs1();
+    public void getFootballerStillPlay(Long chatId , Footballer currentFootballer){
+        String currentfootballerStillplay = currentFootballer.getStillplay();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText(footballername);
+        message.setText(currentfootballerStillplay);
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -424,11 +387,12 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         }
 
     }
-    public void getFootballerClubs2(Long chatId , Footballer currentfootballer){
-        String footballername = currentfootballer.getClubs2();
+
+    public void getFootballerCountry(Long chatId , Footballer currentFootballer){
+        String currentfootballerCountry = currentFootballer.getCountry();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText(footballername);
+        message.setText(currentfootballerCountry);
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -436,11 +400,11 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         }
 
     }
-    public void getFootballerClubs3(Long chatId , Footballer currentfootballer){
-        String footballername = currentfootballer.getClubs3();
+    public void getFootballerSurname(Long chatId , Footballer currentFootballer){
+        String currentFootballerSurname = currentFootballer.getSurname();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText(footballername);
+        message.setText(currentFootballerSurname);
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -448,11 +412,11 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         }
 
     }
-    public void getFootballerClubs4(Long chatId , Footballer currentfootballer){
-        String footballername = currentfootballer.getClubs4();
+    public void getFootballerClubs(Long chatId , Footballer currentFootballer){
+        String currentFootballerClubs = currentFootballer.getClubs();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText(footballername);
+        message.setText(currentFootballerClubs);
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -460,11 +424,12 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         }
 
     }
-    public void getFootballerClubs5(Long chatId , Footballer currentfootballer){
-        String footballername = currentfootballer.getClubs5();
+
+    public void getFootballerClubs1(Long chatId , Footballer currentFootballer){
+        String currentfootballerClubs1 = currentFootballer.getClubs1();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText(footballername);
+        message.setText(currentfootballerClubs1);
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -472,11 +437,11 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         }
 
     }
-    public void getFootballerClubs6(Long chatId , Footballer currentfootballer){
-        String footballername = currentfootballer.getClubs6();
+    public void getFootballerClubs2(Long chatId , Footballer currentFootballer){
+        String currentfootballerClubs2 = currentFootballer.getClubs2();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText(footballername);
+        message.setText(currentfootballerClubs2);
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -484,11 +449,11 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         }
 
     }
-    public void getFootballerClubs7(Long chatId , Footballer currentfootballer){
-        String footballername = currentfootballer.getClubs7();
+    public void getFootballerClubs3(Long chatId , Footballer currentFootballer){
+        String currentfootballerClubs3 = currentFootballer.getClubs3();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText(footballername);
+        message.setText(currentfootballerClubs3);
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -496,11 +461,59 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         }
 
     }
-    public void getFootballerClubs8(Long chatId , Footballer currentfootballer){
-        String footballername = currentfootballer.getClubs8();
+    public void getFootballerClubs4(Long chatId , Footballer currentFootballer){
+        String currentfootballerClubs4 = currentFootballer.getClubs4();
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
-        message.setText(footballername);
+        message.setText(currentfootballerClubs4);
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    public void getFootballerClubs5(Long chatId , Footballer currentFootballer){
+        String currentfootballerClubs5 = currentFootballer.getClubs5();
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText(currentfootballerClubs5);
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    public void getFootballerClubs6(Long chatId , Footballer currentFootballer){
+        String currentfootballerClubs6 = currentFootballer.getClubs6();
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText(currentfootballerClubs6);
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    public void getFootballerClubs7(Long chatId , Footballer currentFootballer){
+        String currentFootballerClubs7 = currentFootballer.getClubs7();
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText(currentFootballerClubs7);
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    public void getFootballerClubs8(Long chatId , Footballer currentFootballer){
+        String currentFootballerClubs8 = currentFootballer.getClubs8();
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText(currentFootballerClubs8);
         try {
             execute(message);
         } catch (TelegramApiException e) {
