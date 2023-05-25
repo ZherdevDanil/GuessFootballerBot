@@ -113,7 +113,6 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             }
         } else if (messageText.equals("/play") || messageText.equals("play")) {
             getFootballer();
-            //saveOrUpdateUser(chatId , Username , 0);
             saveUser(chatId,Username,0);
             startplaykeyboard(chatId , "Оберіть, що перше ви хочете вивести");
 
@@ -125,7 +124,8 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                     "4.Ім'я\n" +
                     "5.Прізвище\n" +
                     "6.Всі клуби\n" +
-                    "7.Перший клуб\n");
+                    "7.Перший клуб\n"+
+                    "8.Повернутися назад\n");
             try {
                 execute(message);
             } catch (TelegramApiException e) {
@@ -154,7 +154,9 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         }else if (messageText.equals("/7") || messageText.equals("7")) {
             clubsKeyboard(chatId , currentFootballer);
 
-        }else if (messageText.equals("/Клуб 1") || messageText.equals("Клуб 1")) {
+        } else if (messageText.equals("/8") || messageText.equals("8")) {
+            startkeyboard(chatId , "Оберіть наступну вашу дію");
+        } else if (messageText.equals("/Клуб 1") || messageText.equals("Клуб 1")) {
             getFootballerClubs1(chatId , currentFootballer);
             points-=5;
         }else if (messageText.equals("/Клуб 2") || messageText.equals("Клуб 2")) {
@@ -217,7 +219,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                     "4.Ім'я\n" +
                     "5.Прізвище\n" +
                     "6.Всі клуби\n" +
-                    "7.Перший клуб\n");
+                    "7.Перший клуб\n +");
             try {
                 execute(message);
             } catch (TelegramApiException e) {
@@ -318,15 +320,17 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         row.add("1");
         row.add("2");
         row.add("3");
+        row.add("4");
 
         keyboardRows.add(row);
 
         row = new KeyboardRow();
 
-        row.add("4");
+
         row.add("5");
         row.add("6");
         row.add("7");
+        row.add("8");
         keyboardRows.add(row);
 
         keyboardMarkup.setKeyboard(keyboardRows);
