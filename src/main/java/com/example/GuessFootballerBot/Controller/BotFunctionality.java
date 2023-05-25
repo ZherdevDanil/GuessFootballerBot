@@ -41,6 +41,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
     @Autowired
     UserService userService;
     private Footballer currentFootballer;
+    //String currentFootballerFullName = getFootballerFullName(chatId , currentFootballer);
 
 
     private static final int FOOTBALLERS_COUNT = 51;
@@ -87,116 +88,89 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
 
 
     public void commandReaction(String messageText , Long chatId , String Username )  {
-        String currentFootballerFullName = getFootballerFullName(chatId , currentFootballer);
-        switch (messageText) {
-            case "/start":
-                try {
-                    import_json_in_db();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                    startkeyboard(chatId , hellophrase(Username));
-                break;
-            case "/possiblefootballer":
-                try {
-                    sendDoc(chatId, new File("C:\\GuessFootballerBot\\footballerhelp.txt"), "Список можливих футболістів");
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-            case "/help":
-            case "help" :
-                try {
-                    sendrules(chatId);
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-            case "/play":
-            case "play":
-                getFootballer();
-                saveOrUpdateUser(chatId , Username , 0);
-                startplaykeyboard(chatId , "Оберіть, що перше ви хочете вивести");
+        if (messageText.equals("/start")) {
+            try {
+                import_json_in_db();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            startkeyboard(chatId, hellophrase(Username));
+        } else if (messageText.equals("/possiblefootballer")) {
+            try {
+                sendDoc(chatId, new File("C:\\GuessFootballerBot\\footballerhelp.txt"), "Список можливих футболістів");
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (messageText.equals("/help") || messageText.equals("help")) {
+            try {
+                sendrules(chatId);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (messageText.equals("/play") || messageText.equals("play")) {
+            getFootballer();
+            saveOrUpdateUser(chatId , Username , 0);
+            startplaykeyboard(chatId , "Оберіть, що перше ви хочете вивести");
 
-                SendMessage message = new SendMessage();
-                message.setChatId(chatId);
-                message.setText("1.Позиція гравця\n" +
-                        "2.Чи грає він досі\n" +
-                        "3.Національність\n" +
-                        "4.Ім'я\n" +
-                        "5.Прізвище\n" +
-                        "6.Всі клуби\n" +
-                        "7.Перший клуб\n");
-                try {
-                    execute(message);
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
-                }
-
-            break;
-            case "1":
-            case "/1":
-
-                getFootballerPosition(chatId,currentFootballer);
-                break;
-            case "2":
-            case "/2":
-                getFootballerStillPlay(chatId , currentFootballer);
-                break;
-            case "3":
-            case "/3":
-                getFootballerCountry(chatId , currentFootballer);
-                break;
-            case "4":
-            case "/4":
-                getFootballerName(chatId,currentFootballer);
-                break;
-            case "5":
-            case "/5":
-                getFootballerSurname(chatId,currentFootballer);
-                break;
-            case "6":
-            case "/6":
-                getFootballerClubs(chatId ,currentFootballer);
-                break;
-            case "7":
-            case "/7":
-                clubsKeyboard(chatId , currentFootballer);
-                break;
-            case "Клуб 1":
-                getFootballerClubs1(chatId , currentFootballer);
-                break;
-            case "Клуб 2":
-                    getFootballerClubs2(chatId, currentFootballer);
-                break;
-            case "Клуб 3":
-                    getFootballerClubs3(chatId, currentFootballer);
-                break;
-            case "Клуб 4":
-                    getFootballerClubs4(chatId , currentFootballer);
-                break;
-            case "Клуб 5":
-                    getFootballerClubs5(chatId, currentFootballer);
-                break;
-            case "Клуб 6":
-                    getFootballerClubs6(chatId, currentFootballer);
-                break;
-            case "Клуб 7":
-                    getFootballerClubs7(chatId, currentFootballer);
-                break;
-            case "Клуб 8":
-                    getFootballerClubs8(chatId, currentFootballer);
-                break;
-            default:
-                try {
-                    defaultmessage(chatId);
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
-                }
-                //System.out.println("Не знаю що написано");
-                break;
-
-
+            SendMessage message = new SendMessage();
+            message.setChatId(chatId);
+            message.setText("1.Позиція гравця\n" +
+                    "2.Чи грає він досі\n" +
+                    "3.Національність\n" +
+                    "4.Ім'я\n" +
+                    "5.Прізвище\n" +
+                    "6.Всі клуби\n" +
+                    "7.Перший клуб\n");
+            try {
+                execute(message);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (messageText.equals("/1") || messageText.equals("1")) {
+            getFootballerPosition(chatId,currentFootballer);
+        } else if (messageText.equals("/2") || messageText.equals("2")) {
+            getFootballerStillPlay(chatId, currentFootballer);
+        } else if (messageText.equals("/3") || messageText.equals("3")) {
+            getFootballerCountry(chatId , currentFootballer);
+        } else if (messageText.equals("/4") || messageText.equals("4")) {
+            getFootballerName(chatId,currentFootballer);
+        }else if (messageText.equals("/5") || messageText.equals("5")) {
+            getFootballerSurname(chatId,currentFootballer);
+        }else if (messageText.equals("/6") || messageText.equals("6")) {
+            getFootballerClubs(chatId ,currentFootballer);
+        }else if (messageText.equals("/7") || messageText.equals("7")) {
+            clubsKeyboard(chatId , currentFootballer);
+        }else if (messageText.equals("/Клуб 1") || messageText.equals("Клуб 1")) {
+            getFootballerClubs1(chatId , currentFootballer);
+        }else if (messageText.equals("/Клуб 2") || messageText.equals("Клуб 2")) {
+            getFootballerClubs2(chatId, currentFootballer);
+        }else if (messageText.equals("/Клуб 3") || messageText.equals("Клуб 3")) {
+            getFootballerClubs3(chatId, currentFootballer);
+        }else if (messageText.equals("/Клуб 4") || messageText.equals("Клуб 4")) {
+            getFootballerClubs4(chatId , currentFootballer);
+        }else if (messageText.equals("/Клуб 5") || messageText.equals("Клуб 5")) {
+            getFootballerClubs5(chatId, currentFootballer);
+        }else if (messageText.equals("/Клуб 6") || messageText.equals("Клуб 6")) {
+            getFootballerClubs6(chatId, currentFootballer);
+        }else if (messageText.equals("/Клуб 7") || messageText.equals("Клуб 7")) {
+            getFootballerClubs7(chatId, currentFootballer);
+        }else if (messageText.equals("/Клуб 8") || messageText.equals("Клуб 8")) {
+            getFootballerClubs8(chatId, currentFootballer);
+        } else if (messageText.equals(getFootballerFullName(currentFootballer))) {
+            SendMessage message = new SendMessage();
+            message.setChatId(String.valueOf(chatId));
+            message.setText("Поздравляю ви вгадали!!!" + " Гравця " + getFootballerFullName(currentFootballer) + " відгадано");
+            try {
+                execute(message);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            try {
+                defaultmessage(chatId);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -336,16 +310,8 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
     }
 
 
-    public String getFootballerFullName(Long chatId , Footballer currentFootballer){
+    public String getFootballerFullName(Footballer currentFootballer){
         String currentfootballerFullname = currentFootballer.getFullname();
-        SendMessage message = new SendMessage();
-        message.setChatId(chatId);
-        message.setText(currentfootballerFullname);
-        try {
-            execute(message);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
-        }
         return currentfootballerFullname;
 
     }
