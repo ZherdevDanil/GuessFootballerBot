@@ -140,6 +140,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             getFootballerClubs(chatId ,currentFootballer);
         }else if (messageText.equals("/7") || messageText.equals("7")) {
             clubsKeyboard(chatId , currentFootballer);
+
         }else if (messageText.equals("/Клуб 1") || messageText.equals("Клуб 1")) {
             getFootballerClubs1(chatId , currentFootballer);
         }else if (messageText.equals("/Клуб 2") || messageText.equals("Клуб 2")) {
@@ -156,10 +157,27 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             getFootballerClubs7(chatId, currentFootballer);
         }else if (messageText.equals("/Клуб 8") || messageText.equals("Клуб 8")) {
             getFootballerClubs8(chatId, currentFootballer);
+
         } else if (messageText.equals(getFootballerFullName(currentFootballer))) {
             SendMessage message = new SendMessage();
             message.setChatId(String.valueOf(chatId));
             message.setText("Поздравляю ви вгадали!!!" + " Гравця " + getFootballerFullName(currentFootballer) + " відгадано");
+            try {
+                execute(message);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (messageText.equals("/Повернутися") || messageText.equals("Повернутися")) {
+            startplaykeyboard(chatId , "Оберіть, що ви хочете вивести" );
+            SendMessage message = new SendMessage();
+            message.setChatId(chatId);
+            message.setText("1.Позиція гравця\n" +
+                    "2.Чи грає він досі\n" +
+                    "3.Національність\n" +
+                    "4.Ім'я\n" +
+                    "5.Прізвище\n" +
+                    "6.Всі клуби\n" +
+                    "7.Перший клуб\n");
             try {
                 execute(message);
             } catch (TelegramApiException e) {
@@ -502,8 +520,10 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         // Генерація кнопок в залежності від кількості клубів
         for (int i = 1; i <= numberOfClubs ; i++) {
                 row.add("Клуб " + i);
-
         }
+        keyboardRows.add(row);
+        row = new KeyboardRow();
+        row.add("Повернутися");
         keyboardRows.add(row);
         keyboardMarkup.setKeyboard(keyboardRows);
         message.setReplyMarkup(keyboardMarkup);
