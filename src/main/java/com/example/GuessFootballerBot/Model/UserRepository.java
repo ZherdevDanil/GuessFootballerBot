@@ -1,13 +1,11 @@
 package com.example.GuessFootballerBot.Model;
 
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
-import java.util.Optional;
 
-/*
+
+/**
     Інтерфейс UserRepository наслідує інтерфейс CrudRepository (Create Read Update Delete) для
     отримання методів роботи з бд User
  */
@@ -15,13 +13,13 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends CrudRepository<User , Long> {
 
-//  Пошук юзера за його chatId
+/**  Пошук юзера за його chatId*/
     User findByChatId(Long chatId);
 
-//   Метод перевіряє чи існує користувач в таблиці
+/**   Метод перевіряє чи існує користувач в таблиці*/
     boolean existsByChatId(Long chatId);
 
-//  Метод для виводу списку з 3 юзерів що мають нійбільшу кількість points  бд
+/**  Метод для виводу списку з 3 юзерів що мають нійбільшу кількість points  бд*/
     List<User> findTop3ByOrderByPointsDesc();
 
 }

@@ -5,7 +5,6 @@ import com.example.GuessFootballerBot.Model.UserFootballerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -18,7 +17,7 @@ public class UserFootballerService {
         this.userFootballerRepository = userFootballerRepository;
     }
 
-//   Метод додає в таблицю chatId та footballerId
+/**   Метод додає в таблицю chatId та footballerId*/
     public void addUserFootballer(Long chatId , Integer footballerId){
         UserFootballer userFootballer = new UserFootballer();
         userFootballer.setChatId(chatId);
@@ -27,12 +26,12 @@ public class UserFootballerService {
 
     }
 
-//   Метод повертає список з footballerId певного користувача за його chatId
+/**   Метод повертає список з footballerId певного користувача за його chatId*/
     public List<Integer> findUserFootballersByChatId(Long chatId ){
         return userFootballerRepository.findUserFootballersByChatId(chatId);
     }
 
-//   Метод дозволяє видаляти поля в таблиці
+/**   Метод дозволяє видаляти поля в таблиці*/
     @Transactional
     public void deleteRowsByChatId(Long chatId){
         userFootballerRepository.deleteByChatId(chatId);
