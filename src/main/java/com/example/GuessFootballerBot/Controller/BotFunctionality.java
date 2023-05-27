@@ -1,26 +1,19 @@
 package com.example.GuessFootballerBot.Controller;
 import com.example.GuessFootballerBot.Config.BotConfiguration;
 import com.example.GuessFootballerBot.Model.Footballer;
-import com.example.GuessFootballerBot.Model.FootballerRepository;
 import com.example.GuessFootballerBot.Model.Service.FootballerService;
-import com.example.GuessFootballerBot.Model.Service.UserService;
-import com.example.GuessFootballerBot.Model.User;
-import com.example.GuessFootballerBot.Model.UserRepository;
+import com.example.GuessFootballerBot.Model.Service.UserFootballerService;
+import com.example.GuessFootballerBot.Model.UserFootballer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-//import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -30,8 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+
 
 @Component
 public class BotFunctionality extends TelegramLongPollingBot implements Commands {
@@ -41,9 +33,10 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
     FootballerFunctionality footballerFunctionality;
     @Autowired
     UserFunctionality userFunctionality;
+    @Autowired
+    UserFootballerService userFootballerService;
 
     private int points = 50;
-
     public BotFunctionality (BotConfiguration configuration) throws IOException {
         this.configuration = configuration;
         try {
@@ -63,6 +56,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         return configuration.getBot_token();
     }
 
+//    метод що перевіряє вхідні дані до бота, та чи може він їх обробити
     @Override
     public void onUpdateReceived(@NotNull Update update) {
         if(update.hasMessage()){
@@ -84,9 +78,10 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
     }
 
 
-
+//  Метод який повертає інформацію відповідно до запиту користувача
     public void commandReaction(String messageText , Long chatId , String Username ) {
         if (messageText.equals("/start")) {
+            userFunctionality.saveUser(chatId , Username , 3);
             try {
                 import_json_in_db();
             } catch (IOException e) {
@@ -100,8 +95,10 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         } else if (messageText.equals("/help") || messageText.equals("help")) {
                 sendrules(chatId);
         } else if (messageText.equals("/play") || messageText.equals("play")) {
+
             footballerFunctionality.getFootballer();
-            userFunctionality.saveUser(chatId, Username, 0);
+            footballerFunctionality.setCurrentFootballer(footballerRepeatability(chatId));
+
             startplaykeyboard(chatId, "Оберіть, що перше ви хочете вивести");
 
             SendMessage message = new SendMessage();
@@ -167,20 +164,23 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             executeSendMessege(footballerFunctionality.getFootballerClubs8(chatId, footballerFunctionality.getCurrentFootballer()));
             points -= 5;
 
-        } else if (messageText.equals(footballerFunctionality.getFootballerFullName(footballerFunctionality.getCurrentFootballer())))/*getFootballerFullName(currentFootballer)))*/ {
+        } else if (messageText.equals(footballerFunctionality.getFootballerFullName(footballerFunctionality.getCurrentFootballer()))) {
             if (points < 0) {
                 points = 0;
                 SendMessage message = new SendMessage();
                 message.setChatId(String.valueOf(chatId));
                 message.setText("Поздравляю ви вгадали!!!" + " Гравця " + footballerFunctionality.getFootballerFullName(footballerFunctionality.getCurrentFootballer()) + " відгадано\n" +
                         "Вам зараховано " + points + " очок");
+                userFootballerService.addUserFootballer(chatId , footballerFunctionality.getCurrentFootballer().getId());
                 userFunctionality.updateUser(chatId, points);
+
                 executeSendMessege(message);
             } else {
                 SendMessage message = new SendMessage();
                 message.setChatId(String.valueOf(chatId));
                 message.setText("Поздравляю ви вгадали!!!" + " Гравця " + footballerFunctionality.getFootballerFullName(footballerFunctionality.getCurrentFootballer()) + " відгадано\n" +
                         "Вам зараховано " + points + " очок");
+                userFootballerService.addUserFootballer(chatId , footballerFunctionality.getCurrentFootballer().getId());
                 userFunctionality.updateUser(chatId, points);
                 executeSendMessege(message);
             }
@@ -203,19 +203,18 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             defaultmessage(chatId);
         }
     }
-
+//  метод повертаэ фразу привітання
     public String hellophrase(String UserName){
         return "Привіт " + UserName + " Я телеграм бот GuessFootballer , і якщо тобі нічим зайнятися, я сподіваюся ти добре проведеш тут час";
     }
-
-
+//  метод відправляє message коли не розпізнає запит який надіслав користувач
     public void defaultmessage(Long chatId ) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText("Не розумію що ви хочете від мене");
         executeSendMessege(message);
     }
-
+//  метод відправляє текстовий документ з можливими футболістами
     public void sendDoc(Long chatid ,File file , String caption) {
         SendDocument sendDocument = new SendDocument();
         sendDocument.setChatId(chatid);
@@ -230,13 +229,14 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
 
     }
 
+//    метод відправляє правила гри
     public void sendrules(Long chatid){
         SendMessage message = new SendMessage();
         message.setChatId(chatid);
         message.setText("Правила гри 'Вгадай футболіста' доволі прості\n" +
                 "1.Як не дивно головна ваша мета це вгадати заданого ботом футболіста\n" +
                 "2.Після натискання або написання в чат команди /play ви отримаєте можливість обрати, які перші дані про футболіста ви хочете вивести, це може бути або перший клуб,або національність,або статус або позиція гравця,також є можливість вивести одразу всі клуби гравця, або роботи це по одному,натискаючи на кнопку наступний клуб\n" +
-                "3.Після того як ви вивели початкові значення вам нараховується 30 очок, звичайно за умови, що ви не вивели всі кліби, в такому випадку з вас одразу зніметься 20 очок\n" +
+                "3.Після того як ви вивели початкові значення вам нараховується 50 очок, звичайно за умови, що ви не вивели всі кліби, в такому випадку з вас одразу зніметься 20 очок\n" +
                 "4.Кожне наступне відкривання клуба буде коштувати вам 2 балів, відкриття даних про позицію, національність,та статус гравця(грає він, чи вже закінчив кар'єру\n" +
                 "5.Також можна вивести або ім'я гравця, або його прізвище,кожна з можливостей буде коштувати вам 25 балів\n" +
                 "6.Якщо ви не знаєте що за футболіста вам загадали ви можете нажати на кнопку здатися, і тоді вам буде нараховано 5 очок\n" +
@@ -247,7 +247,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
 
         executeSendMessege(message);
     }
-
+//  Метод створює початкову ReplyKeyboard
     public void startkeyboard(Long chatId , String MessageText ){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -274,6 +274,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         message.setReplyMarkup(keyboardMarkup);
         executeSendMessege(message);
     }
+//    метод створює ReplyKeyboard з кнопками які позначують, що саме користувач може вивести
     public void startplaykeyboard(Long chatId , String messageText ){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -305,6 +306,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         message.setReplyMarkup(keyboardMarkup);
         executeSendMessege(message);
     }
+//    метод створює ReplyKeyboard з кількістю кнопок яка дорівнює кількості клубам гравця(завдяки методу getNumberOfRow)
     public void clubsKeyboard(Long chatId, Footballer currentFootballer) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -328,7 +330,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         message.setReplyMarkup(keyboardMarkup);
         executeSendMessege(message);
     }
-
+//  метод перевіряє в скількох клубах грав футболіст
     private int getNumberOfRow(Footballer footballer) {
         int number_of_row = 0;
         if (!footballer.getClubs1().isEmpty()){
@@ -359,6 +361,38 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
     }
 
 
+
+//    Метод який перевіряє id currentFootballer зі списком  footballerId що є в бд userFotballer
+//    Якщо вони рівні то генерується новий футболіст з бд FootballerBd допоки id будуть різні
+//    Якщо кількість відгаданих футболістів у користувача, тобто довжина списку з id відгаданих футболістів та футболістів з
+//    з FootballerBd рівні, то поля в таблиці UserFootballer видаляються і користувач може знову відгадувати тих футболістів
+//    що вже відгадав
+
+    public Footballer footballerRepeatability(Long chatId) {
+        List<Integer> footballerIds = userFootballerService.findUserFootballersByChatId(chatId);
+        Footballer footballer = footballerFunctionality.getCurrentFootballer();
+        if (footballerIds.size() == footballerFunctionality.FOOTBALLERS_COUNT){
+            SendMessage message = new SendMessage();
+            message.setChatId(chatId);
+            message.setText("Поздравляю!!! Ви вгадали всіх футболістів яки були в базі даних.\n" +
+                    "Відтепер вам зустрічатимуться гравці яких ви вже відгадували");
+            executeSendMessege(message);
+            userFootballerService.deleteRowsByChatId(chatId);
+
+        }else {
+            while (footballerIds.contains(footballer.getId())) {
+                System.out.println("Випав гравець який вже є в базі данних");
+                footballerFunctionality.getFootballer();
+                footballer = footballerFunctionality.getCurrentFootballer();
+            }
+        }
+        return footballer;
+    }
+
+
+
+
+//  Метод для виводу тексту з екземпляру типу SendMessage
     public void executeSendMessege(SendMessage message){
         try {
             execute(message);
@@ -367,7 +401,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         }
 
     }
-
+//  Method for importing data from the footballer_data.json file into the FootballerDb database
     public void import_json_in_db() throws IOException {
         if (footballerFunctionality.getFootballerService().count() == 0){
             ObjectMapper objectMapper = new ObjectMapper();

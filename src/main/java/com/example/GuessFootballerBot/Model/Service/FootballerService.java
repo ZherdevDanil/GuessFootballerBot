@@ -17,18 +17,19 @@ public class FootballerService {
         this.footballerRepository = footballerRepository;
     }
 
+//    метод повертає кількість полів в таблиці FootballerDb
     public long count(){
         return footballerRepository.count();
     }
+
+//    метод зберігає List об'єктами класу Footballer в бд FootballerDB
 
     public Iterable<Footballer> saveAll(List<Footballer> footballers) {
         return footballerRepository.saveAll(footballers);
     }
 
+//    Реалізація методу з інтерфейсу FootballerRepository
     public Optional<Footballer> findById(Integer randomId){
         return footballerRepository.findById(randomId);
     }
-
-
-
 }

@@ -16,6 +16,7 @@ public class UserFunctionality {
         return userService;
     }
 
+//    Метод оновляє дані в таблиці, додає points юзеру в таблиці UserDb
     public void updateUser(Long chatId, Integer points){
         if(userService.existsByChatId(chatId)){
             User user = userService.findByChatId(chatId);
@@ -23,7 +24,7 @@ public class UserFunctionality {
             userService.save(user);
         }
     }
-
+//  Метод зберігає юзера в таблиці
     public void saveUser(Long chatId, String userName , Integer points){
         if (!userService.existsByChatId(chatId)){
             User newUser = new User();
@@ -33,6 +34,9 @@ public class UserFunctionality {
             userService.save(newUser);
         }
     }
+/*    метод виводить Iнформацію про користувача, його ім'я та кількість очок, якщо юзера не існує, то він додається в таблицю,
+        якщо юзер існує в таблиці то виводиться інформація
+ */
 
     public SendMessage infoUser(Long chatId , String userName){
         if (userService.existsByChatId(chatId)) {

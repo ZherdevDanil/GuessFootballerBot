@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+/*
+    Таблиця з футболістами FootballerDb
+ */
 @Data
 @Entity(name = "FootballerDb")
 public class Footballer{
