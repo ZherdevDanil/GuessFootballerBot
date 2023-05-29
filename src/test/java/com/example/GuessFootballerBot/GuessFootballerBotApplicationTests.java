@@ -8,6 +8,7 @@ class GuessFootballerBotApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }

@@ -34,8 +34,14 @@ public class FootballerFunctionality {
         return FOOTBALLERS_COUNT;
     }
 
-    @Autowired
+    //@Autowired
     private FootballerService footballerService;
+
+    @Autowired
+    public FootballerFunctionality(FootballerService footballerService) {
+        this.footballerService = footballerService;
+    }
+
     @Bean
     public FootballerService getFootballerService() {
         return footballerService;
