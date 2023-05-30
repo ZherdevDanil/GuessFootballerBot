@@ -20,6 +20,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -33,6 +34,11 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
     UserFunctionality userFunctionality;
     @Autowired
     UserFootballerService userFootballerService;
+
+    private int[] counterForButtons = new int[5];
+
+    private int[] counterForClubButtons = new int[7];
+
 
     private int points = 50;
     public BotFunctionality (BotConfiguration configuration) throws IOException {
@@ -87,15 +93,18 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             }
             startkeyboard(chatId, hellophrase(Username));
         } else if (messageText.equals("/possiblefootballer")) {
-                sendDoc(chatId, new File("C:\\GuessFootballerBot\\footballerhelp.txt"), "Список можливих футболістів");
+                sendDoc(chatId, new File("C:\\GuessFootballerBot\\footballerhelp.pdf"), "Список можливих футболістів");
         } else if (messageText.equals("/my_data") || messageText.equals("my_data")) {
             executeSendMessege(userFunctionality.infoUser(chatId, Username));
         } else if (messageText.equals("/help") || messageText.equals("help")) {
                 sendrules(chatId);
         } else if (messageText.equals("/play") || messageText.equals("play")) {
+            System.out.println(Arrays.toString(counterForButtons));
 
             footballerFunctionality.getFootballer();
             footballerFunctionality.setCurrentFootballer(footballerRepeatability(chatId));
+            setZeroForCounters(counterForButtons);
+            setZeroForCounters(counterForClubButtons);
 
             startplaykeyboard(chatId, "Оберіть, що перше ви хочете вивести");
 
@@ -116,22 +125,32 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             }
         } else if (messageText.equals("/1") || messageText.equals("1")) {
             executeSendMessege(footballerFunctionality.getFootballerPosition(chatId, footballerFunctionality.getCurrentFootballer()));
-            points -= 5;
+            repeatButtons(0 , 5);
+            /*if (counterForButtons[1] == 0){
+                points=-5;
+                counterForButtons[1]+=1;
+            }else
+                points -= 5;*/
         } else if (messageText.equals("/2") || messageText.equals("2")) {
             executeSendMessege(footballerFunctionality.getFootballerStillPlay(chatId, footballerFunctionality.getCurrentFootballer()));
-            points -= 5;
+            //points -= 5;
+            repeatButtons(1 , 5);
         } else if (messageText.equals("/3") || messageText.equals("3")) {
             executeSendMessege(footballerFunctionality.getFootballerCountry(chatId, footballerFunctionality.getCurrentFootballer()));
-            points -= 5;
+            //points -= 5;
+            repeatButtons(2 , 5);
         } else if (messageText.equals("/4") || messageText.equals("4")) {
             executeSendMessege(footballerFunctionality.getFootballerName(chatId, footballerFunctionality.getCurrentFootballer()));
-            points -= 20;
+            //points -= 20;
+            repeatButtons(3 , 20);
         } else if (messageText.equals("/5") || messageText.equals("5")) {
             executeSendMessege(footballerFunctionality.getFootballerSurname(chatId, footballerFunctionality.getCurrentFootballer()));
-            points -= 20;
+            //points -= 20;
+            repeatButtons(4 , 20);
         } else if (messageText.equals("/6") || messageText.equals("6")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs(chatId, footballerFunctionality.getCurrentFootballer()));
-            points -= 15;
+            //points -= 15;
+            repeatButtons(5,15);
         } else if (messageText.equals("/7") || messageText.equals("7")) {
             clubsKeyboard(chatId, footballerFunctionality.getCurrentFootballer());
 
@@ -139,28 +158,36 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             startkeyboard(chatId, "Оберіть наступну вашу дію");
         } else if (messageText.equals("/Клуб 1") || messageText.equals("Клуб 1")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs1(chatId, footballerFunctionality.getCurrentFootballer()));
-            points -= 5;
+            //points -= 5;
+            repeatClubButtons(0,5);
         } else if (messageText.equals("/Клуб 2") || messageText.equals("Клуб 2")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs2(chatId, footballerFunctionality.getCurrentFootballer()));
-            points -= 5;
+            //points -= 5;
+            repeatClubButtons(1,5);
         } else if (messageText.equals("/Клуб 3") || messageText.equals("Клуб 3")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs3(chatId, footballerFunctionality.getCurrentFootballer()));
-            points -= 5;
+            //points -= 5;
+            repeatClubButtons(2,5);
         } else if (messageText.equals("/Клуб 4") || messageText.equals("Клуб 4")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs4(chatId, footballerFunctionality.getCurrentFootballer()));
-            points -= 5;
+            //points -= 5;
+            repeatClubButtons(3,5);
         } else if (messageText.equals("/Клуб 5") || messageText.equals("Клуб 5")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs5(chatId, footballerFunctionality.getCurrentFootballer()));
-            points -= 5;
+            //points -= 5;
+            repeatClubButtons(4,5);
         } else if (messageText.equals("/Клуб 6") || messageText.equals("Клуб 6")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs6(chatId, footballerFunctionality.getCurrentFootballer()));
-            points -= 5;
+            //points -= 5;
+            repeatClubButtons(5,5);
         } else if (messageText.equals("/Клуб 7") || messageText.equals("Клуб 7")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs7(chatId, footballerFunctionality.getCurrentFootballer()));
-            points -= 5;
+            //points -= 5;
+            repeatClubButtons(6,5);
         } else if (messageText.equals("/Клуб 8") || messageText.equals("Клуб 8")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs8(chatId, footballerFunctionality.getCurrentFootballer()));
-            points -= 5;
+            //points -= 5;
+            repeatClubButtons(7,5);
 
         } else if (messageText.equals(footballerFunctionality.getFootballerFullName(footballerFunctionality.getCurrentFootballer()))) {
             if (points < 0) {
@@ -195,7 +222,8 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                     "4.Ім'я\n" +
                     "5.Прізвище\n" +
                     "6.Всі клуби\n" +
-                    "7.Клуб\n");
+                    "7.Клуб\n" +
+                    "8.Повернутися");
             executeSendMessege(message);
                  } else {
             defaultmessage(chatId);
@@ -385,6 +413,26 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             }
         }
         return footballer;
+    }
+
+    public void repeatButtons(int i,int countOfPoint) {
+        if (counterForButtons[i] == 0) {
+            points = points - countOfPoint;
+            counterForButtons[i] += 1;
+        }
+    }
+    public void repeatClubButtons(int i,int countOfPoint) {
+        if (counterForClubButtons[i] == 0) {
+            points = points - countOfPoint;
+            counterForClubButtons[i] += 1;
+        }
+    }
+
+    public void setZeroForCounters(int[] counterArray){
+        for (int i = 0; i < counterArray.length; i++) {
+            counterArray[i] = 0;
+        }
+
     }
 
 /**

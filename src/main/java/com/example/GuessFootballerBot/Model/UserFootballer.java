@@ -7,10 +7,11 @@ import lombok.Data;
  * такого футболіста
  * */
 @Data
-@Entity(name = "UserFootballer")
+@Entity(name = "UserFootballerr")
 public class UserFootballer {
-    @Id
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Integer id;
 
     private Long chatId;
