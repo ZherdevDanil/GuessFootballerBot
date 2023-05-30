@@ -1,5 +1,9 @@
-package com.example.GuessFootballerBot.Controller;
+package com.example.GuessFootballerBot.Controller.View;
+
 import com.example.GuessFootballerBot.Config.BotConfiguration;
+//import com.example.GuessFootballerBot.Controller.Commands;
+import com.example.GuessFootballerBot.Controller.FootballerFunctionality;
+import com.example.GuessFootballerBot.Controller.UserFunctionality;
 import com.example.GuessFootballerBot.Model.Footballer;
 import com.example.GuessFootballerBot.Model.Service.UserFootballerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,10 +17,12 @@ import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,31 +31,40 @@ import java.util.List;
 
 
 @Component
-public class BotFunctionality extends TelegramLongPollingBot implements Commands {
-    @Autowired
-    BotConfiguration configuration;
-    @Autowired
-    FootballerFunctionality footballerFunctionality;
-    @Autowired
-    UserFunctionality userFunctionality;
-    @Autowired
-    UserFootballerService userFootballerService;
+public class BotFunctionality extends TelegramLongPollingBot {
+    private final BotConfiguration configuration;
+    private final FootballerFunctionality footballerFunctionality;
+    private final UserFunctionality userFunctionality;
+    private final UserFootballerService userFootballerService;
 
-    private int[] counterForButtons = new int[5];
+    private int[] counterForButtons = new int[6];
 
-    private int[] counterForClubButtons = new int[7];
+    private int[] counterForClubButtons = new int[8];
+
+    private int numberOfClubsCurrentPlayer;
+    List<BotCommand> commands = List.of(
+            new BotCommand("/start", "start bot"),
+            new BotCommand("/help", "game rules"),
+            new BotCommand("/possiblefootballer", "list_of_footballers")
+    );
 
 
     private int points = 50;
-    public BotFunctionality (BotConfiguration configuration) throws IOException {
+
+    @Autowired
+    public BotFunctionality(BotConfiguration configuration, FootballerFunctionality footballerFunctionality, UserFunctionality userFunctionality, UserFootballerService userFootballerService) throws IOException {
         this.configuration = configuration;
+        this.footballerFunctionality = footballerFunctionality;
+        this.userFunctionality = userFunctionality;
+        this.userFootballerService = userFootballerService;
         try {
-            this.execute(new SetMyCommands(commands , new BotCommandScopeDefault(),null ));
+            this.execute(new SetMyCommands(commands, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
 
     }
+
     @Override
     public String getBotUsername() {
         return configuration.getBot_name();
@@ -60,32 +75,36 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         return configuration.getBot_token();
     }
 
-/**    метод що перевіряє вхідні дані до бота, та чи може він їх обробити*/
+    /**
+     * метод що перевіряє вхідні дані до бота, та чи може він їх обробити
+     */
     @Override
     public void onUpdateReceived(@NotNull Update update) {
-        if(update.hasMessage()){
+        if (update.hasMessage()) {
             Long chatId = update.getMessage().getChatId();
             String Username = update.getMessage().getFrom().getFirstName();
 
 
-            if(update.getMessage().hasText()){
+            if (update.getMessage().hasText()) {
                 String messageText = update.getMessage().getText();
-                commandReaction(messageText , chatId , Username);
+                commandReaction(messageText, chatId, Username);
             }
-        }else if (update.hasCallbackQuery()) {
+        } else if (update.hasCallbackQuery()) {
             String messageText = update.getMessage().getText();
             Long chatId = update.getCallbackQuery().getMessage().getChatId();
             String Username = update.getMessage().getFrom().getFirstName();
-            commandReaction(messageText , chatId , Username);
+            commandReaction(messageText, chatId, Username);
 
         }
     }
 
 
-/**  Метод який повертає інформацію відповідно до запиту користувача*/
-    public void commandReaction(String messageText , Long chatId , String Username ) {
+    /**
+     * Метод який повертає інформацію відповідно до запиту користувача
+     */
+    public void commandReaction(String messageText, Long chatId, String Username) {
         if (messageText.equals("/start")) {
-            userFunctionality.saveUser(chatId , Username , 3);
+            userFunctionality.saveUser(chatId, Username, 3);
             try {
                 import_json_in_db();
             } catch (IOException e) {
@@ -93,16 +112,17 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             }
             startkeyboard(chatId, hellophrase(Username));
         } else if (messageText.equals("/possiblefootballer")) {
-                sendDoc(chatId, new File("C:\\GuessFootballerBot\\footballerhelp.pdf"), "Список можливих футболістів");
+            sendDoc(chatId, new File("C:\\GuessFootballerBot\\footballerhelp.pdf"), "Список можливих футболістів");
         } else if (messageText.equals("/my_data") || messageText.equals("my_data")) {
             executeSendMessege(userFunctionality.infoUser(chatId, Username));
         } else if (messageText.equals("/help") || messageText.equals("help")) {
-                sendrules(chatId);
+            sendrules(chatId);
         } else if (messageText.equals("/play") || messageText.equals("play")) {
             System.out.println(Arrays.toString(counterForButtons));
 
             footballerFunctionality.getFootballer();
             footballerFunctionality.setCurrentFootballer(footballerRepeatability(chatId));
+            numberOfClubsCurrentPlayer = getNumberOfRow(footballerFunctionality.getCurrentFootballer());
             setZeroForCounters(counterForButtons);
             setZeroForCounters(counterForClubButtons);
 
@@ -125,69 +145,51 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             }
         } else if (messageText.equals("/1") || messageText.equals("1")) {
             executeSendMessege(footballerFunctionality.getFootballerPosition(chatId, footballerFunctionality.getCurrentFootballer()));
-            repeatButtons(0 , 5);
-            /*if (counterForButtons[1] == 0){
-                points=-5;
-                counterForButtons[1]+=1;
-            }else
-                points -= 5;*/
+            repeatButtons(0, 10);
+
         } else if (messageText.equals("/2") || messageText.equals("2")) {
             executeSendMessege(footballerFunctionality.getFootballerStillPlay(chatId, footballerFunctionality.getCurrentFootballer()));
-            //points -= 5;
-            repeatButtons(1 , 5);
+            repeatButtons(1, 10);
         } else if (messageText.equals("/3") || messageText.equals("3")) {
             executeSendMessege(footballerFunctionality.getFootballerCountry(chatId, footballerFunctionality.getCurrentFootballer()));
-            //points -= 5;
-            repeatButtons(2 , 5);
+            repeatButtons(2, 10);
         } else if (messageText.equals("/4") || messageText.equals("4")) {
             executeSendMessege(footballerFunctionality.getFootballerName(chatId, footballerFunctionality.getCurrentFootballer()));
-            //points -= 20;
-            repeatButtons(3 , 20);
+            repeatButtons(3, 40);
         } else if (messageText.equals("/5") || messageText.equals("5")) {
             executeSendMessege(footballerFunctionality.getFootballerSurname(chatId, footballerFunctionality.getCurrentFootballer()));
-            //points -= 20;
-            repeatButtons(4 , 20);
+            repeatButtons(4, 45);
         } else if (messageText.equals("/6") || messageText.equals("6")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs(chatId, footballerFunctionality.getCurrentFootballer()));
-            //points -= 15;
-            repeatButtons(5,15);
+            repeatButtons(5, numberOfClubsCurrentPlayer*5);
         } else if (messageText.equals("/7") || messageText.equals("7")) {
             clubsKeyboard(chatId, footballerFunctionality.getCurrentFootballer());
-
         } else if (messageText.equals("/8") || messageText.equals("8")) {
             startkeyboard(chatId, "Оберіть наступну вашу дію");
         } else if (messageText.equals("/Клуб 1") || messageText.equals("Клуб 1")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs1(chatId, footballerFunctionality.getCurrentFootballer()));
-            //points -= 5;
-            repeatClubButtons(0,5);
+            repeatClubButtons(0, 5);
         } else if (messageText.equals("/Клуб 2") || messageText.equals("Клуб 2")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs2(chatId, footballerFunctionality.getCurrentFootballer()));
-            //points -= 5;
-            repeatClubButtons(1,5);
+            repeatClubButtons(1, 5);
         } else if (messageText.equals("/Клуб 3") || messageText.equals("Клуб 3")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs3(chatId, footballerFunctionality.getCurrentFootballer()));
-            //points -= 5;
-            repeatClubButtons(2,5);
+            repeatClubButtons(2, 5);
         } else if (messageText.equals("/Клуб 4") || messageText.equals("Клуб 4")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs4(chatId, footballerFunctionality.getCurrentFootballer()));
-            //points -= 5;
-            repeatClubButtons(3,5);
+            repeatClubButtons(3, 5);
         } else if (messageText.equals("/Клуб 5") || messageText.equals("Клуб 5")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs5(chatId, footballerFunctionality.getCurrentFootballer()));
-            //points -= 5;
-            repeatClubButtons(4,5);
+            repeatClubButtons(4, 5);
         } else if (messageText.equals("/Клуб 6") || messageText.equals("Клуб 6")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs6(chatId, footballerFunctionality.getCurrentFootballer()));
-            //points -= 5;
-            repeatClubButtons(5,5);
+            repeatClubButtons(5, 5);
         } else if (messageText.equals("/Клуб 7") || messageText.equals("Клуб 7")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs7(chatId, footballerFunctionality.getCurrentFootballer()));
-            //points -= 5;
-            repeatClubButtons(6,5);
+            repeatClubButtons(6, 5);
         } else if (messageText.equals("/Клуб 8") || messageText.equals("Клуб 8")) {
             executeSendMessege(footballerFunctionality.getFootballerClubs8(chatId, footballerFunctionality.getCurrentFootballer()));
-            //points -= 5;
-            repeatClubButtons(7,5);
+            repeatClubButtons(7, 5);
 
         } else if (messageText.equals(footballerFunctionality.getFootballerFullName(footballerFunctionality.getCurrentFootballer()))) {
             if (points < 0) {
@@ -196,7 +198,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                 message.setChatId(String.valueOf(chatId));
                 message.setText("Поздравляю ви вгадали!!!" + " Гравця " + footballerFunctionality.getFootballerFullName(footballerFunctionality.getCurrentFootballer()) + " відгадано\n" +
                         "Вам зараховано " + points + " очок");
-                userFootballerService.addUserFootballer(chatId , footballerFunctionality.getCurrentFootballer().getId());
+                userFootballerService.addUserFootballer(chatId, footballerFunctionality.getCurrentFootballer().getId());
                 userFunctionality.updateUser(chatId, points);
 
                 executeSendMessege(message);
@@ -205,7 +207,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                 message.setChatId(String.valueOf(chatId));
                 message.setText("Поздравляю ви вгадали!!!" + " Гравця " + footballerFunctionality.getFootballerFullName(footballerFunctionality.getCurrentFootballer()) + " відгадано\n" +
                         "Вам зараховано " + points + " очок");
-                userFootballerService.addUserFootballer(chatId , footballerFunctionality.getCurrentFootballer().getId());
+                userFootballerService.addUserFootballer(chatId, footballerFunctionality.getCurrentFootballer().getId());
                 userFunctionality.updateUser(chatId, points);
                 executeSendMessege(message);
             }
@@ -225,23 +227,32 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
                     "7.Клуб\n" +
                     "8.Повернутися");
             executeSendMessege(message);
-                 } else {
+        } else {
             defaultmessage(chatId);
         }
     }
-/**  метод повертаэ фразу привітання*/
-    public String hellophrase(String UserName){
+
+    /**
+     * метод повертає фразу привітання
+     */
+    public String hellophrase(String UserName) {
         return "Привіт " + UserName + " Я телеграм бот GuessFootballer , і якщо тобі нічим зайнятися, я сподіваюся ти добре проведеш тут час";
     }
-/**  метод відправляє message коли не розпізнає запит який надіслав користувач*/
-    public void defaultmessage(Long chatId ) {
+
+    /**
+     * метод відправляє message коли не розпізнає запит який надіслав користувач
+     */
+    public void defaultmessage(Long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText("Не розумію що ви хочете від мене");
         executeSendMessege(message);
     }
-/**  метод відправляє текстовий документ з можливими футболістами*/
-    public void sendDoc(Long chatid ,File file , String caption) {
+
+    /**
+     * метод відправляє документ з можливими футболістами
+     */
+    public void sendDoc(Long chatid, File file, String caption) {
         SendDocument sendDocument = new SendDocument();
         sendDocument.setChatId(chatid);
         sendDocument.setCaption(caption);
@@ -255,26 +266,32 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
 
     }
 
-/**    метод відправляє правила гри*/
-    public void sendrules(Long chatid){
+    /**
+     * метод відправляє правила гри
+     */
+    public void sendrules(Long chatid) {
         SendMessage message = new SendMessage();
         message.setChatId(chatid);
         message.setText("Правила гри 'Вгадай футболіста' доволі прості\n" +
                 "1.Як не дивно головна ваша мета це вгадати заданого ботом футболіста\n" +
                 "2.Після натискання або написання в чат команди /play ви отримаєте можливість обрати, які перші дані про футболіста ви хочете вивести, це може бути або перший клуб,або національність,або статус або позиція гравця,також є можливість вивести одразу всі клуби гравця, або роботи це по одному,натискаючи на кнопку наступний клуб\n" +
-                "3.Після того як ви вивели початкові значення вам нараховується 50 очок, звичайно за умови, що ви не вивели всі кліби, в такому випадку з вас одразу зніметься 20 очок\n" +
-                "4.Кожне наступне відкривання клуба буде коштувати вам 2 балів, відкриття даних про позицію, національність,та статус гравця(грає він, чи вже закінчив кар'єру\n" +
-                "5.Також можна вивести або ім'я гравця, або його прізвище,кожна з можливостей буде коштувати вам 25 балів\n" +
-                "6.Якщо ви не знаєте що за футболіста вам загадали ви можете нажати на кнопку здатися, і тоді вам буде нараховано 5 очок\n" +
-                "7.Правильною відповіддю буде важатися лише коректно написане прізвище та ім'я з великою букви, як правильно писати прізвище та ім'я футболіста ви можете подивитися в файлі footballerhelp.txt , це файл можна отримати задяки цій команді /possiblefootballer\n" +
-                "8.Інофрмація про кількість гравців що ви вгадали, та кількість балів що ви за них отримали буде збережена\n" +
+                "3.Після того як ви вивели початкові значення вам нараховується 50 очок\n" +
+                "4.Відкрити ім'я буде коштувати вам 40 балів, відкрити прізвище буде коштувати 45 балів\n" +
+                "5.Такі параметри як позиція,чи грає гравець досі, національність будуть коштувати по 10 балів\n" +
+                "6.За вивід кожного клубу буде зніматися по 5, очок, якщо ж ви хочете вивести всі клуби разом то це буде коштувати кількість_клубів*5\n" +
+                "7.Правильною відповіддю буде важатися лише коректно написане прізвище та ім'я з великою букви, як правильно писати прізвище та ім'я футболіста ви можете подивитися в файлі footballerhelp.pdf , це файл можна отримати завдяки цій команді /possiblefootballer\n" +
+                "8.Якщо ви не хочете відгадувати футболіста який вам випав, ви можете натистути на клавішу повернутися і потім знову нажати на play, в такому випадку буде згенерований новий гравець\n" +
+                "9.Також ви маєте можливість подивитися на свою кількість очок, а також подивитися топ 3 гравці" +
                 "\n" +
                 "Приємної гри!!!");
 
         executeSendMessege(message);
     }
-/**  Метод створює початкову ReplyKeyboard*/
-    public void startkeyboard(Long chatId , String MessageText ){
+
+    /**
+     * Метод створює початкову ReplyKeyboard
+     */
+    public void startkeyboard(Long chatId, String MessageText) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(MessageText);
@@ -300,8 +317,11 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         message.setReplyMarkup(keyboardMarkup);
         executeSendMessege(message);
     }
-/**    метод створює ReplyKeyboard з кнопками які позначують, що саме користувач може вивести*/
-    public void startplaykeyboard(Long chatId , String messageText ){
+
+    /**
+     * метод створює ReplyKeyboard з кнопками які позначують, що саме користувач може вивести
+     */
+    public void startplaykeyboard(Long chatId, String messageText) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(messageText);
@@ -332,7 +352,10 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         message.setReplyMarkup(keyboardMarkup);
         executeSendMessege(message);
     }
-/**    метод створює ReplyKeyboard з кількістю кнопок яка дорівнює кількості клубам гравця(завдяки методу getNumberOfRow)*/
+
+    /**
+     * метод створює ReplyKeyboard з кількістю кнопок яка дорівнює кількості клубам гравця(завдяки методу getNumberOfRow)
+     */
     public void clubsKeyboard(Long chatId, Footballer currentFootballer) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
@@ -345,8 +368,8 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         KeyboardRow row = new KeyboardRow();
         int numberOfClubs = getNumberOfRow(currentFootballer);
         // Генерація кнопок в залежності від кількості клубів
-        for (int i = 1; i <= numberOfClubs ; i++) {
-                row.add("Клуб " + i);
+        for (int i = 1; i <= numberOfClubs; i++) {
+            row.add("Клуб " + i);
         }
         keyboardRows.add(row);
         row = new KeyboardRow();
@@ -356,48 +379,52 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         message.setReplyMarkup(keyboardMarkup);
         executeSendMessege(message);
     }
-/**  метод перевіряє в скількох клубах грав футболіст*/
+
+    /**
+     * метод перевіряє в скількох клубах грав футболіст
+     */
     private int getNumberOfRow(Footballer footballer) {
         int number_of_row = 0;
-        if (!footballer.getClubs1().isEmpty()){
+        if (!footballer.getClubs1().isEmpty()) {
             number_of_row++;
         }
-        if (!footballer.getClubs2().isEmpty()){
+        if (!footballer.getClubs2().isEmpty()) {
             number_of_row++;
         }
-        if (!footballer.getClubs3().isEmpty()){
+        if (!footballer.getClubs3().isEmpty()) {
             number_of_row++;
         }
-        if (!footballer.getClubs4().isEmpty()){
+        if (!footballer.getClubs4().isEmpty()) {
             number_of_row++;
         }
-        if (!footballer.getClubs5().isEmpty()){
+        if (!footballer.getClubs5().isEmpty()) {
             number_of_row++;
         }
-        if (!footballer.getClubs6().isEmpty()){
+        if (!footballer.getClubs6().isEmpty()) {
             number_of_row++;
         }
-        if (!footballer.getClubs7().isEmpty()){
+        if (!footballer.getClubs7().isEmpty()) {
             number_of_row++;
         }
-        if (!footballer.getClubs8().isEmpty()){
+        if (!footballer.getClubs8().isEmpty()) {
             number_of_row++;
         }
+
         return number_of_row;
     }
 
 
-/**
-    Метод який перевіряє id currentFootballer зі списком  footballerId що є в бд userFotballer
-    Якщо вони рівні то генерується новий футболіст з бд FootballerBd допоки id будуть різні
-    Якщо кількість відгаданих футболістів у користувача, тобто довжина списку з id відгаданих футболістів та футболістів з
-    з FootballerBd рівні, то поля в таблиці UserFootballer видаляються і користувач може знову відгадувати тих футболістів
-    що вже відгадав
-*/
+    /**
+     * Метод який перевіряє id currentFootballer зі списком  footballerId що є в бд userFotballer
+     * Якщо вони рівні то генерується новий футболіст з бд FootballerBd допоки id будуть різні
+     * Якщо кількість відгаданих футболістів у користувача, тобто довжина списку з id відгаданих футболістів та футболістів з
+     * з FootballerBd рівні, то поля в таблиці UserFootballer видаляються і користувач може знову відгадувати тих футболістів
+     * що вже відгадав
+     */
     public Footballer footballerRepeatability(Long chatId) {
         List<Integer> footballerIds = userFootballerService.findUserFootballersByChatId(chatId);
         Footballer footballer = footballerFunctionality.getCurrentFootballer();
-        if (footballerIds.size() == footballerFunctionality.getFOOTBALLERS_COUNT()){
+        if (footballerIds.size() == footballerFunctionality.getFOOTBALLERS_COUNT()) {
             SendMessage message = new SendMessage();
             message.setChatId(chatId);
             message.setText("Поздравляю!!! Ви вгадали всіх футболістів яки були в базі даних.\n" +
@@ -405,7 +432,7 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
             executeSendMessege(message);
             userFootballerService.deleteRowsByChatId(chatId);
 
-        }else {
+        } else {
             while (footballerIds.contains(footballer.getId())) {
                 System.out.println("Випав гравець який вже є в базі данних");
                 footballerFunctionality.getFootballer();
@@ -415,31 +442,32 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         return footballer;
     }
 
-    public void repeatButtons(int i,int countOfPoint) {
+    public void repeatButtons(int i, int countOfPoint) {
         if (counterForButtons[i] == 0) {
             points = points - countOfPoint;
             counterForButtons[i] += 1;
         }
     }
-    public void repeatClubButtons(int i,int countOfPoint) {
+
+    public void repeatClubButtons(int i, int countOfPoint) {
         if (counterForClubButtons[i] == 0) {
             points = points - countOfPoint;
             counterForClubButtons[i] += 1;
         }
     }
 
-    public void setZeroForCounters(int[] counterArray){
+    public void setZeroForCounters(int[] counterArray) {
         for (int i = 0; i < counterArray.length; i++) {
             counterArray[i] = 0;
         }
 
     }
 
-/**
- * Метод для виводу тексту з екземпляру типу SendMessage
- */
+    /**
+     * Метод для виводу тексту з екземпляру типу SendMessage
+     */
 
-    public void executeSendMessege(SendMessage message){
+    public void executeSendMessege(SendMessage message) {
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -447,17 +475,18 @@ public class BotFunctionality extends TelegramLongPollingBot implements Commands
         }
 
     }
+
     /**
-    *Method for importing data from the footballer_data.json file into the FootballerDb database
-    */
+     * Method for importing data from the footballer_data.json file into the FootballerDb database
+     */
 
 
     public void import_json_in_db() throws IOException {
-        if (footballerFunctionality.getFootballerService().count() == 0){
+        if (footballerFunctionality.getFootballerService().count() == 0) {
             ObjectMapper objectMapper = new ObjectMapper();
             TypeFactory typeFactory = objectMapper.getTypeFactory();
             List<Footballer> allfootballers = objectMapper.readValue(new File("C:\\GuessFootballerBot\\footballer_data.json"),
-            typeFactory.constructCollectionType(List.class, Footballer.class));
+                    typeFactory.constructCollectionType(List.class, Footballer.class));
             footballerFunctionality.getFootballerService().saveAll(allfootballers);
         }
 

@@ -4,34 +4,69 @@ import com.example.GuessFootballerBot.Model.User;
 import com.example.GuessFootballerBot.Model.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
 import java.util.List;
 
 /**
-    Клас для реалізації методів з UserRepository
+ * Клас для реалізації методів з UserRepository
  */
 @Service
 public class UserService {
     private final UserRepository userRepository;
+
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-/**  Метод зберігає юзера в бд*/
-    public void save(User user){
-        userRepository.save(user);
+
+    /**
+     * Метод зберігає юзера в бд
+     */
+    public void save(User user) {
+        try {
+            userRepository.save(user);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-/**  Метод шукає та повертає юзера за його chatId*/
-    public User findByChatId(Long chatId){
-        return userRepository.findByChatId(chatId);
+    /**
+     * Метод шукає та повертає юзера за його chatId
+     */
+    public User findByChatId(Long chatId) {
+        try {
+            return userRepository.findByChatId(chatId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-/**  Метод перевіряє чи є користувач з chatId в таблиці*/
+    /**
+     * Метод перевіряє чи є користувач з chatId в таблиці
+     */
     public boolean existsByChatId(Long chatId) {
-        return userRepository.existsByChatId(chatId);
+        try {
+            return userRepository.existsByChatId(chatId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
-/**  метод повертає список з 3 екземплярів класа User, в яких найбільша кількість points в бд*/
+
+    /**
+     * метод повертає список з 3 екземплярів класа User, в яких найбільша кількість points в бд
+     */
     public List<User> getTopUsers() {
-        return userRepository.findTop3ByOrderByPointsDesc();
+        try {
+            return userRepository.findTop3ByOrderByPointsDesc();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
     }
 }

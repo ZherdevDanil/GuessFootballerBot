@@ -1,6 +1,6 @@
 package com.example.GuessFootballerBot.Config;
 
-import com.example.GuessFootballerBot.Controller.BotFunctionality;
+import com.example.GuessFootballerBot.Controller.View.BotFunctionality;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -22,7 +22,6 @@ public class BotInitializer {
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
             telegramBotsApi.registerBot((LongPollingBot) bot);
         } catch (TelegramApiException e) {
-            //log.error(e.getMessage());
             System.out.println("Помилка" + e.getMessage());
         }
     }

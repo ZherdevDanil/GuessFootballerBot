@@ -1,0 +1,90 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class BotConfiguration {
+  ~ bot_token: String
+  ~ bot_name: String
+}
+class BotFunctionality {
+  - counterForButtons: int[]
+  - userFootballerService: UserFootballerService
+  - footballerFunctionality: FootballerFunctionality
+  - points: int
+  - counterForClubButtons: int[]
+  - userFunctionality: UserFunctionality
+  - configuration: BotConfiguration
+  - numberOfClubsCurrentPlayer: int
+  ~ commands: List<BotCommand>
+}
+class BotInitializer {
+  ~ bot: BotFunctionality
+}
+class Footballer {
+  - clubs8: String
+  - clubs5: String
+  - clubs: String
+  - clubs6: String
+  - fullname: String
+  - surname: String
+  - clubs3: String
+  - clubs1: String
+  - clubs2: String
+  - clubs7: String
+  - clubs4: String
+  - position: String
+  - stillplay: String
+  - id: int
+  - country: String
+  - name: String
+}
+class FootballerFunctionality {
+  - footballerService: FootballerService
+  - FOOTBALLERS_COUNT: int
+  - userFunctionality: UserFunctionality
+  - currentFootballer: Footballer
+}
+interface FootballerRepository << interface >>
+class FootballerService {
+  - footballerRepository: FootballerRepository
+}
+class GuessFootballerBotApplication
+class User {
+  ~ chatId: Long
+  ~ points: Integer
+  ~ UserName: String
+}
+class UserFootballer {
+  - chatId: Long
+  - footballerId: Integer
+  - id: Integer
+}
+interface UserFootballerRepository << interface >>
+class UserFootballerService {
+  ~ userFootballerRepository: UserFootballerRepository
+}
+class UserFunctionality {
+  ~ userService: UserService
+}
+interface UserRepository << interface >>
+class UserService {
+  - userRepository: UserRepository
+}
+
+BotFunctionality              "1" *-[#595959,plain]-> "configuration\n1" BotConfiguration              
+BotFunctionality              "1" *-[#595959,plain]-> "footballerFunctionality\n1" FootballerFunctionality       
+BotFunctionality              "1" *-[#595959,plain]-> "userFootballerService\n1" UserFootballerService         
+BotFunctionality              "1" *-[#595959,plain]-> "userFunctionality\n1" UserFunctionality             
+BotInitializer                "1" *-[#595959,plain]-> "bot\n1" BotFunctionality              
+FootballerFunctionality       "1" *-[#595959,plain]-> "currentFootballer\n1" Footballer                    
+FootballerFunctionality       "1" *-[#595959,plain]-> "footballerService\n1" FootballerService             
+FootballerFunctionality       "1" *-[#595959,plain]-> "userFunctionality\n1" UserFunctionality             
+FootballerService             "1" *-[#595959,plain]-> "footballerRepository\n1" FootballerRepository          
+UserFootballerService          -[#595959,dashed]->  UserFootballer                : "«create»"
+UserFootballerService         "1" *-[#595959,plain]-> "userFootballerRepository\n1" UserFootballerRepository      
+UserFunctionality              -[#595959,dashed]->  User                          : "«create»"
+UserFunctionality             "1" *-[#595959,plain]-> "userService\n1" UserService                   
+UserService                   "1" *-[#595959,plain]-> "userRepository\n1" UserRepository                
+@enduml

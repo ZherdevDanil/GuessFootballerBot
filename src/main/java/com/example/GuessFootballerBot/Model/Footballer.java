@@ -5,11 +5,11 @@ import jakarta.persistence.Id;
 import lombok.Data;
 
 /**
-    Таблиця з футболістами FootballerDb
+ * Таблиця з футболістами FootballerDb
  */
 @Data
 @Entity(name = "FootballerDb")
-public class Footballer{
+public class Footballer {
     @Id
     private int id;
     private String name;

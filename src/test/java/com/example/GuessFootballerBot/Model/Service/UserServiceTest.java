@@ -1,107 +1,125 @@
 package com.example.GuessFootballerBot.Model.Service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.example.GuessFootballerBot.Model.User;
 import com.example.GuessFootballerBot.Model.UserRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.stubbing.Answer;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class UserServiceTest {
+public class UserServiceTest {
+
     @Mock
     private UserRepository userRepository;
 
     private UserService userService;
 
     @BeforeEach
-    void setUp() {
+    public void setup() {
         MockitoAnnotations.openMocks(this);
         userService = new UserService(userRepository);
     }
 
     @Test
-    void testSave() {
+    public void testSaveUser() {
+        // Создание тестового пользователя
         User user = new User();
+        user.setChatId(123456L);
+        user.setUserName("TestUser");
+        user.setPoints(100);
 
-        // Configure the userRepository.save() method to capture the saved user
-        doAnswer((Answer<Void>) invocation -> {
-            Object[] args = invocation.getArguments();
-            User savedUser = (User) args[0];
-            assertEquals(user, savedUser);
-            return null;
-        }).when(userRepository).save(user);
-
+        // Выполнение сохранения пользователя
         userService.save(user);
 
+        // Проверка, что метод save был вызван с правильным пользователем
         verify(userRepository).save(user);
     }
 
-
-
     @Test
-    void testFindByChatId_UserExists() {
-        User user = new User();
-        doReturn(Optional.of(user)).when(userRepository).findByChatId(1L);
+    public void testFindByChatId_UserExists() {
+        // Подготовка данных для теста
+        Long chatId = 123456L;
+        User expectedUser = new User();
+        expectedUser.setChatId(chatId);
 
-        User result = userService.findByChatId(1L);
+        // Настройка поведения репозитория
+        when(userRepository.findByChatId(chatId)).thenReturn(expectedUser);
 
-        assertNotNull(result);
-        assertEquals(user, result);
-        verify(userRepository).findByChatId(1L);
+        // Выполнение метода, который тестируем
+        User result = userService.findByChatId(chatId);
+
+        // Проверка результата
+        Assertions.assertEquals(expectedUser, result);
+        verify(userRepository).findByChatId(chatId);
     }
 
     @Test
-    void testFindByChatId_UserNotExists() {
-        doReturn(Optional.empty()).when(userRepository).findByChatId(1L);
+    public void testFindByChatId_UserDoesNotExist() {
+        // Подготовка данных для теста
+        Long chatId = 123456L;
 
-        User result = userService.findByChatId(1L);
+        // Настройка поведения репозитория
+        when(userRepository.findByChatId(chatId)).thenReturn(null);
 
-        assertNull(result);
-        verify(userRepository).findByChatId(1L);
-    }
-    @Test
-    void testExistsByChatId_True() {
-        when(userRepository.existsByChatId(1L)).thenReturn(true);
+        // Выполнение метода, который тестируем
+        User result = userService.findByChatId(chatId);
 
-        boolean result = userService.existsByChatId(1L);
-
-        assertTrue(result);
-        verify(userRepository).existsByChatId(1L);
+        // Проверка результата
+        Assertions.assertNull(result);
+        verify(userRepository).findByChatId(chatId);
     }
 
     @Test
-    void testExistsByChatId_False() {
-        when(userRepository.existsByChatId(1L)).thenReturn(false);
+    public void testExistsByChatId_UserExists() {
+        // Подготовка данных для теста
+        Long chatId = 123456L;
 
-        boolean result = userService.existsByChatId(1L);
+        // Настройка поведения репозитория
+        when(userRepository.existsByChatId(chatId)).thenReturn(true);
 
-        assertFalse(result);
-        verify(userRepository).existsByChatId(1L);
+        // Выполнение метода, который тестируем
+        boolean result = userService.existsByChatId(chatId);
+
+        // Проверка результата
+        Assertions.assertTrue(result);
+        verify(userRepository).existsByChatId(chatId);
     }
 
-    // Тестирование getTopUsers() зависит от реализации UserRepository.
-    // В данном примере предполагается, что метод findTop3ByOrderByPointsDesc()
-    // возвращает список пользователей.
+    @Test
+    public void testExistsByChatId_UserDoesNotExist() {
+        // Подготовка данных для теста
+        Long chatId = 123456L;
+
+        // Настройка поведения репозитория
+        when(userRepository.existsByChatId(chatId)).thenReturn(false);
+
+        // Выполнение метода, который тестируем
+        boolean result = userService.existsByChatId(chatId);
+
+        // Проверка результата
+        Assertions.assertFalse(result);
+        verify(userRepository).existsByChatId(chatId);
+    }
 
     @Test
-    void testGetTopUsers() {
-        List<User> users = new ArrayList<>();
-        when(userRepository.findTop3ByOrderByPointsDesc()).thenReturn(users);
+    public void testGetTopUsers() {
+        // Подготовка данных для теста
+        List<User> expectedUsers = Collections.singletonList(new User());
 
+        // Настройка поведения репозитория
+        when(userRepository.findTop3ByOrderByPointsDesc()).thenReturn(expectedUsers);
+
+        // Выполнение метода, который тестируем
         List<User> result = userService.getTopUsers();
 
-        assertNotNull(result);
-        assertEquals(users, result);
+        // Проверка результата
+        Assertions.assertEquals(expectedUsers, result);
         verify(userRepository).findTop3ByOrderByPointsDesc();
     }
 }

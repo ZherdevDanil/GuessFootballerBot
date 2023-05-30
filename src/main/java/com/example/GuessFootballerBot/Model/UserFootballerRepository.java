@@ -9,14 +9,18 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UserFootballerRepository extends CrudRepository<UserFootballer , Integer> {
+public interface UserFootballerRepository extends CrudRepository<UserFootballer, Integer> {
 
-/**  Запит видаляє всі поля таблиці з певним chatId*/
+    /**
+     * Запит видаляє всі поля таблиці з певним chatId
+     */
     @Modifying
     @Query("DELETE FROM UserFootballerr userfootballer WHERE userfootballer.chatId = :chatId")
     void deleteByChatId(@Param("chatId") Long chatId);
 
-/**  Запит повертає список footballerId які відповідають певному користувачу з його chatId*/
+    /**
+     * Запит повертає список footballerId які відповідають певному користувачу з його chatId
+     */
     @Query("SELECT userfootballer.footballerId FROM UserFootballerr userfootballer WHERE userfootballer.chatId = :chatId")
     List<Integer> findUserFootballersByChatId(@Param("chatId") Long chatId);
 }
