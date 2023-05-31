@@ -28,6 +28,9 @@ class UserFootballerServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * тест перевіряє, що метод addUserFootballer() зберігає користувача-футболіста з правильним chatId і footballerId в репозиторії
+     */
     @Test
     void testAddUserFootballer() {
         Long chatId = 123456L;
@@ -42,6 +45,9 @@ class UserFootballerServiceTest {
         verify(userFootballerRepository).save(userFootballer);
     }
 
+    /**
+     * тест перевіряє, що метод findUserFootballersByChatId() повертає список футболістів з правильним chatId з репозиторію
+     */
     @Test
     void testFindUserFootballersByChatId() {
         Long chatId = 123456L;
@@ -55,6 +61,9 @@ class UserFootballerServiceTest {
         verify(userFootballerRepository).findUserFootballersByChatId(chatId);
     }
 
+    /**
+     * тест перевіряє, що метод findUserFootballersByChatId() повертає пустий список, якщо виникає виключна ситуація при виконанні запиту до репозиторію
+     */
     @Test
     void testFindUserFootballersByChatId_WithException() {
         Long chatId = 123456L;
@@ -67,6 +76,9 @@ class UserFootballerServiceTest {
         verify(userFootballerRepository).findUserFootballersByChatId(chatId);
     }
 
+    /**
+     * тест перевіряє, що метод deleteRowsByChatId() видаляє рядки з правильним chatId з репозиторію
+     */
     @Test
     void testDeleteRowsByChatId() {
         Long chatId = 123456L;

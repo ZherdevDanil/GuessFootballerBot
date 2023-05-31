@@ -77,6 +77,7 @@ public class BotFunctionality extends TelegramLongPollingBot {
 
     /**
      * метод що перевіряє вхідні дані до бота, та чи може він їх обробити
+     * @param update
      */
     @Override
     public void onUpdateReceived(@NotNull Update update) {
@@ -101,6 +102,9 @@ public class BotFunctionality extends TelegramLongPollingBot {
 
     /**
      * Метод який повертає інформацію відповідно до запиту користувача
+     * @param messageText
+     * @param chatId
+     * @param Username
      */
     public void commandReaction(String messageText, Long chatId, String Username) {
         if (messageText.equals("/start")) {
@@ -234,6 +238,8 @@ public class BotFunctionality extends TelegramLongPollingBot {
 
     /**
      * метод повертає фразу привітання
+     * @param UserName
+     * @return
      */
     public String hellophrase(String UserName) {
         return "Привіт " + UserName + " Я телеграм бот GuessFootballer , і якщо тобі нічим зайнятися, я сподіваюся ти добре проведеш тут час";
@@ -241,6 +247,7 @@ public class BotFunctionality extends TelegramLongPollingBot {
 
     /**
      * метод відправляє message коли не розпізнає запит який надіслав користувач
+     * @param chatId
      */
     public void defaultmessage(Long chatId) {
         SendMessage message = new SendMessage();
@@ -251,6 +258,9 @@ public class BotFunctionality extends TelegramLongPollingBot {
 
     /**
      * метод відправляє документ з можливими футболістами
+     * @param chatid
+     * @param file
+     * @param caption
      */
     public void sendDoc(Long chatid, File file, String caption) {
         SendDocument sendDocument = new SendDocument();
@@ -268,6 +278,7 @@ public class BotFunctionality extends TelegramLongPollingBot {
 
     /**
      * метод відправляє правила гри
+     * @param chatid
      */
     public void sendrules(Long chatid) {
         SendMessage message = new SendMessage();
@@ -290,6 +301,8 @@ public class BotFunctionality extends TelegramLongPollingBot {
 
     /**
      * Метод створює початкову ReplyKeyboard
+     * @param chatId
+     * @param MessageText
      */
     public void startkeyboard(Long chatId, String MessageText) {
         SendMessage message = new SendMessage();
@@ -320,6 +333,8 @@ public class BotFunctionality extends TelegramLongPollingBot {
 
     /**
      * метод створює ReplyKeyboard з кнопками які позначують, що саме користувач може вивести
+     * @param chatId
+     * @param messageText
      */
     public void startplaykeyboard(Long chatId, String messageText) {
         SendMessage message = new SendMessage();
@@ -355,6 +370,8 @@ public class BotFunctionality extends TelegramLongPollingBot {
 
     /**
      * метод створює ReplyKeyboard з кількістю кнопок яка дорівнює кількості клубам гравця(завдяки методу getNumberOfRow)
+     * @param chatId
+     * @param currentFootballer
      */
     public void clubsKeyboard(Long chatId, Footballer currentFootballer) {
         SendMessage message = new SendMessage();
@@ -382,6 +399,8 @@ public class BotFunctionality extends TelegramLongPollingBot {
 
     /**
      * метод перевіряє в скількох клубах грав футболіст
+     * @param footballer
+     * @return
      */
     private int getNumberOfRow(Footballer footballer) {
         int number_of_row = 0;
@@ -416,10 +435,12 @@ public class BotFunctionality extends TelegramLongPollingBot {
 
     /**
      * Метод який перевіряє id currentFootballer зі списком  footballerId що є в бд userFotballer
-     * Якщо вони рівні то генерується новий футболіст з бд FootballerBd допоки id будуть різні
-     * Якщо кількість відгаданих футболістів у користувача, тобто довжина списку з id відгаданих футболістів та футболістів з
-     * з FootballerBd рівні, то поля в таблиці UserFootballer видаляються і користувач може знову відгадувати тих футболістів
+     *  Якщо вони рівні то генерується новий футболіст з бд FootballerBd допоки id будуть різні
+     *  Якщо кількість відгаданих футболістів у користувача, тобто довжина списку з id відгаданих футболістів та футболістів з
+     *  з FootballerBd рівні, то поля в таблиці UserFootballer видаляються і користувач може знову відгадувати тих футболістів
      * що вже відгадав
+     * @param chatId
+     * @return
      */
     public Footballer footballerRepeatability(Long chatId) {
         List<Integer> footballerIds = userFootballerService.findUserFootballersByChatId(chatId);
@@ -442,13 +463,26 @@ public class BotFunctionality extends TelegramLongPollingBot {
         return footballer;
     }
 
+    /**
+     *  метод перевіряє чи нажмималася одна і та сама кнопка декілька разів, якщо кнопка нажата вперше,
+     *      * тоз користувача знімаютсья очки, якщо ні, то очки не змінаються
+     *
+     * @param i
+     * @param countOfPoint
+     */
     public void repeatButtons(int i, int countOfPoint) {
         if (counterForButtons[i] == 0) {
             points = points - countOfPoint;
             counterForButtons[i] += 1;
         }
     }
-
+    /**
+     *  метод перевіряє чи нажмималася одна і та сама кнопка декілька разів, якщо кнопка нажата вперше,
+     *      * тоз користувача знімаютсья очки, якщо ні, то очки не змінаються
+     *
+     * @param i
+     * @param countOfPoint
+     */
     public void repeatClubButtons(int i, int countOfPoint) {
         if (counterForClubButtons[i] == 0) {
             points = points - countOfPoint;

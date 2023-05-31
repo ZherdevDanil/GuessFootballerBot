@@ -30,7 +30,10 @@ class FootballerFunctionalityTest {
     private FootballerFunctionality footballerFunctionality;
 
 
-
+    /**
+     * Перевіряє, чи отримується поточний футболіст шляхом виклику методу
+     * getFootballer() класу FootballerFunctionality
+     */
     @Test
     void testGetFootballer() {
         int randomId = 5;
@@ -46,6 +49,9 @@ class FootballerFunctionalityTest {
         Assertions.assertNotNull(currentFootballer);
     }
 
+    /**
+     * Перевіряє, чи отримується повне ім'я футболіста шляхом виклику методу getFootballerFullName() класу FootballerFunctionality.
+     */
     @Test
     void testGetFootballerFullName() {
         Footballer footballer = new Footballer();
@@ -56,6 +62,10 @@ class FootballerFunctionalityTest {
         Assertions.assertNotNull(fullName);
     }
 
+    /**
+     *Перевіряє, чи отримується ім'я футболіста разом з повідомленням шляхом виклику
+     * методу getFootballerName() класу FootballerFunctionality
+     */
     @Test
     void testGetFootballerName() {
         Long chatId = 123456L;
@@ -68,6 +78,11 @@ class FootballerFunctionalityTest {
         Assertions.assertNotNull(message.getChatId());
         Assertions.assertNotNull(message.getText());
     }
+
+    /**
+     *Перевіряє, чи отримується позиція футболіста разом з повідомленням шляхом виклику
+     * методу getFootballerPosition() класу FootballerFunctionality
+     */
     @Test
     void testGetFootballerPosition() {
         Long chatId = 123456L;
@@ -81,6 +96,10 @@ class FootballerFunctionalityTest {
         Assertions.assertEquals("Forward", message.getText());
     }
 
+    /**
+     *Перевіряє, чи отримується інформація про те, чи продовжує футболіст грати разом з повідомленням шляхом
+     * виклику методу getFootballerStillPlay() класу FootballerFunctionality
+     */
     @Test
     void testGetFootballerStillPlay() {
         Long chatId = 123456L;
@@ -94,6 +113,10 @@ class FootballerFunctionalityTest {
         Assertions.assertEquals("Yes", message.getText());
     }
 
+    /**
+     * Перевіряє, чи отримується країна футболіста разом з повідомленням шляхом
+     * виклику методу getFootballerCountry() класу FootballerFunctionality
+     */
     @Test
     void testGetFootballerCountry() {
         Long chatId = 123456L;
@@ -107,6 +130,10 @@ class FootballerFunctionalityTest {
         Assertions.assertEquals("Spain", message.getText());
     }
 
+    /**
+     *Перевіряє, чи отримується прізвище футболіста разом з повідомленням шляхом виклику
+     * методу getFootballerSurname() класу FootballerFunctionality.
+     */
     @Test
     void testGetFootballerSurname() {
         Long chatId = 123456L;
@@ -120,6 +147,10 @@ class FootballerFunctionalityTest {
         Assertions.assertEquals("Ronaldo", message.getText());
     }
 
+    /**
+     *Перевіряє, чи отримується прізвище футболіста разом з повідомленням шляхом виклику
+     * методу getFootballerSurname() класу FootballerFunctionality
+     */
     @Test
     void testGetFootballerClubs() {
         Long chatId = 123456L;
@@ -133,6 +164,10 @@ class FootballerFunctionalityTest {
         Assertions.assertEquals("Real Madrid, Manchester United", message.getText());
     }
 
+    /**
+     *Перевіряє, чи отримується перший клуб, в якому грав футболіст, разом з повідомленням шляхом виклику
+     * методу getFootballerClubs1() класу FootballerFunctionality.
+     */
     @Test
     void testGetFootballerClubs1() {
         Long chatId = 123456L;

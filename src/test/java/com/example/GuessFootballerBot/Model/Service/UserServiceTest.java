@@ -26,6 +26,9 @@ public class UserServiceTest {
         userService = new UserService(userRepository);
     }
 
+    /**
+     * тест перевіряє, що метод save() викликається з правильним користувачем при збереженні користувача
+     */
     @Test
     public void testSaveUser() {
         // Создание тестового пользователя
@@ -41,6 +44,9 @@ public class UserServiceTest {
         verify(userRepository).save(user);
     }
 
+    /**
+     *тест перевіряє, що метод findByChatId() повертає очікуваного користувача, коли користувач з заданим chatId існує в репозиторії
+     */
     @Test
     public void testFindByChatId_UserExists() {
         // Подготовка данных для теста
@@ -59,6 +65,9 @@ public class UserServiceTest {
         verify(userRepository).findByChatId(chatId);
     }
 
+    /**
+     *тест перевіряє, що метод findByChatId() повертає null, коли користувач з заданим chatId не існує в репозиторії.
+     */
     @Test
     public void testFindByChatId_UserDoesNotExist() {
         // Подготовка данных для теста
@@ -75,6 +84,10 @@ public class UserServiceTest {
         verify(userRepository).findByChatId(chatId);
     }
 
+    /**
+     * тест перевіряє, що метод existsByChatId() повертає true, коли користувач з заданим chatId існує в репозиторії
+     *
+     */
     @Test
     public void testExistsByChatId_UserExists() {
         // Подготовка данных для теста
@@ -90,6 +103,9 @@ public class UserServiceTest {
         Assertions.assertTrue(result);
         verify(userRepository).existsByChatId(chatId);
     }
+    /**
+     *тест перевіряє, що метод existsByChatId() повертає false, коли користувач з заданим chatId не існує в репозиторії
+     */
 
     @Test
     public void testExistsByChatId_UserDoesNotExist() {
@@ -107,6 +123,9 @@ public class UserServiceTest {
         verify(userRepository).existsByChatId(chatId);
     }
 
+    /**
+     *тест перевіряє, що метод getTopUsers() повертає очікуваний список користувачів, коли викликається метод findTop3ByOrderByPointsDesc() в репозиторії
+     */
     @Test
     public void testGetTopUsers() {
         // Подготовка данных для теста

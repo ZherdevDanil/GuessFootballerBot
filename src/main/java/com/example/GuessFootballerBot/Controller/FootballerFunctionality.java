@@ -49,6 +49,7 @@ public class FootballerFunctionality {
 
     /**
      * Метод генераю випадкове id в діапазоні [1,51], кількість футболістів в таблиці 51
+     * @return
      */
     public int genereateRandomFootballerId() {
         Random random = new Random();
@@ -73,6 +74,8 @@ public class FootballerFunctionality {
 
     /**
      * Метод повертає повне ім'я currentFootballer
+     * @param currentFootballer
+     * @return
      */
     public String getFootballerFullName(Footballer currentFootballer) {
         String currentfootballerFullname = currentFootballer.getFullname();
@@ -81,6 +84,9 @@ public class FootballerFunctionality {
 
     /**
      * Метод повертає ім'я футболіста
+     * @param chatId
+     * @param currentFootballer
+     * @return
      */
     public SendMessage getFootballerName(Long chatId, Footballer currentFootballer) {
         String currentFootballerName = currentFootballer.getName();
@@ -92,6 +98,9 @@ public class FootballerFunctionality {
 
     /**
      * Метод повертає позицію футболіста
+     * @param chatId
+     * @param currentFootballer
+     * @return
      */
     public SendMessage getFootballerPosition(Long chatId, Footballer currentFootballer) {
         String currentFootballerPosition = currentFootballer.getPosition();
@@ -102,7 +111,10 @@ public class FootballerFunctionality {
     }
 
     /**
-     * метод повертає чи грає футболіст досі
+     * Метод повертає інформацію про те, чи грає футболіст досі
+     * @param chatId
+     * @param currentFootballer
+     * @return
      */
     public SendMessage getFootballerStillPlay(Long chatId, Footballer currentFootballer) {
         String currentfootballerStillplay = currentFootballer.getStillplay();
@@ -114,6 +126,9 @@ public class FootballerFunctionality {
 
     /**
      * метод повертає країну де народився
+     * @param chatId
+     * @param currentFootballer
+     * @return
      */
     public SendMessage getFootballerCountry(Long chatId, Footballer currentFootballer) {
         String currentfootballerCountry = currentFootballer.getCountry();
@@ -126,6 +141,9 @@ public class FootballerFunctionality {
 
     /**
      * метод повертає прізвище
+     * @param chatId
+     * @param currentFootballer
+     * @return
      */
     public SendMessage getFootballerSurname(Long chatId, Footballer currentFootballer) {
         String currentFootballerSurname = currentFootballer.getSurname();
@@ -137,6 +155,9 @@ public class FootballerFunctionality {
 
     /**
      * метод повертає всі клуби в яких був гравець
+     * @param chatId
+     * @param currentFootballer
+     * @return
      */
     public SendMessage getFootballerClubs(Long chatId, Footballer currentFootballer) {
         String currentFootballerClubs = currentFootballer.getClubs();
@@ -148,6 +169,9 @@ public class FootballerFunctionality {
 
     /**
      * метод повертає перший клуб
+     * @param chatId
+     * @param currentFootballer
+     * @return
      */
     public SendMessage getFootballerClubs1(Long chatId, Footballer currentFootballer) {
         String currentfootballerClubs1 = currentFootballer.getClubs1();
@@ -159,6 +183,9 @@ public class FootballerFunctionality {
 
     /**
      * метод повертає другий клуб
+     * @param chatId
+     * @param currentFootballer
+     * @return
      */
 
     public SendMessage getFootballerClubs2(Long chatId, Footballer currentFootballer) {
@@ -171,6 +198,9 @@ public class FootballerFunctionality {
 
     /**
      * метод повертає третій клуб
+     * @param chatId
+     * @param currentFootballer
+     * @return
      */
 
     public SendMessage getFootballerClubs3(Long chatId, Footballer currentFootballer) {
@@ -183,6 +213,9 @@ public class FootballerFunctionality {
 
     /**
      * метод повертає четвертий клуб
+     * @param chatId
+     * @param currentFootballer
+     * @return
      */
 
     public SendMessage getFootballerClubs4(Long chatId, Footballer currentFootballer) {
@@ -195,6 +228,9 @@ public class FootballerFunctionality {
 
     /**
      * метод повертає п'ятий клуб
+     * @param chatId
+     * @param currentFootballer
+     * @return
      */
 
     public SendMessage getFootballerClubs5(Long chatId, Footballer currentFootballer) {
@@ -207,7 +243,11 @@ public class FootballerFunctionality {
 
     /**
      * метод повертає шостий клуб
+     * @param chatId
+     * @param currentFootballer
+     * @return
      */
+
 
     public SendMessage getFootballerClubs6(Long chatId, Footballer currentFootballer) {
         String currentfootballerClubs6 = currentFootballer.getClubs6();
@@ -219,8 +259,10 @@ public class FootballerFunctionality {
 
     /**
      * метод повертає сьомий клуб
+     * @param chatId
+     * @param currentFootballer
+     * @return
      */
-
     public SendMessage getFootballerClubs7(Long chatId, Footballer currentFootballer) {
         String currentFootballerClubs7 = currentFootballer.getClubs7();
         SendMessage message = new SendMessage();
@@ -231,6 +273,9 @@ public class FootballerFunctionality {
 
     /**
      * метод повертає восьмий клуб
+     * @param chatId
+     * @param currentFootballer
+     * @return
      */
 
     public SendMessage getFootballerClubs8(Long chatId, Footballer currentFootballer) {
@@ -243,6 +288,8 @@ public class FootballerFunctionality {
 
     /**
      * метод повертає список з 3 юзерів з найбільшою кількістю points
+     * @param chatId
+     * @return
      */
     public List<SendMessage> getTopPlayers(Long chatId) {
         List<User> topusers = userFunctionality.getUserService().getTopUsers();

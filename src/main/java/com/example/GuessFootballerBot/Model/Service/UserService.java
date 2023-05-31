@@ -22,6 +22,7 @@ public class UserService {
 
     /**
      * Метод зберігає юзера в бд
+     * @param user
      */
     public void save(User user) {
         try {
@@ -34,6 +35,8 @@ public class UserService {
 
     /**
      * Метод шукає та повертає юзера за його chatId
+     * @param chatId
+     * @return
      */
     public User findByChatId(Long chatId) {
         try {
@@ -46,6 +49,8 @@ public class UserService {
 
     /**
      * Метод перевіряє чи є користувач з chatId в таблиці
+     * @param chatId
+     * @return
      */
     public boolean existsByChatId(Long chatId) {
         try {
@@ -59,6 +64,7 @@ public class UserService {
 
     /**
      * метод повертає список з 3 екземплярів класа User, в яких найбільша кількість points в бд
+     * @return
      */
     public List<User> getTopUsers() {
         try {

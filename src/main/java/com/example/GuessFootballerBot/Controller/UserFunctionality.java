@@ -19,6 +19,8 @@ public class UserFunctionality {
 
     /**
      * Метод оновляє дані в таблиці, додає points юзеру в таблиці UserDb
+     * @param chatId
+     * @param points
      */
     public void updateUser(Long chatId, Integer points) {
         try {
@@ -36,6 +38,9 @@ public class UserFunctionality {
 
     /**
      * Метод зберігає юзера в таблиці
+     * @param chatId
+     * @param userName
+     * @param points
      */
     public void saveUser(Long chatId, String userName, Integer points) {
         try {
@@ -57,6 +62,9 @@ public class UserFunctionality {
     /**
      * метод виводить Iнформацію про користувача, його ім'я та кількість очок, якщо юзера не існує, то він додається в таблицю,
      * якщо юзер існує в таблиці то виводиться інформація
+     * @param chatId
+     * @param userName
+     * @return
      */
 
     public SendMessage infoUser(Long chatId, String userName) {

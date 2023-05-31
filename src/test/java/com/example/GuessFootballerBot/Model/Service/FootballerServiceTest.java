@@ -28,6 +28,9 @@ class FootballerServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * тест перевіряє, що метод count() повертає правильну кількість футболістів шляхом перевірки поверненого значення з репозиторію
+     */
     @Test
     void testCount() {
         long expectedCount = 5;
@@ -40,6 +43,9 @@ class FootballerServiceTest {
         verify(footballerRepository).count();
     }
 
+    /**
+     * тест перевіряє, що метод saveAll() зберігає список футболістів і повертає їх, порівнюючи повернене значення з репозиторію з очікуваним списком футболістів
+     */
     @Test
     void testSaveAll() {
         List<Footballer> footballers = Arrays.asList(
@@ -55,6 +61,9 @@ class FootballerServiceTest {
         verify(footballerRepository).saveAll(footballers);
     }
 
+    /**
+     * тест перевіряє, що метод findById() повертає футболіста з правильним ідентифікатором, перевіряючи, чи повернуто значення Optional містить футболіста з репозиторію і порівнюючи його з очікуваним футболістом
+     */
     @Test
     void testFindById() {
         int randomId = 1;

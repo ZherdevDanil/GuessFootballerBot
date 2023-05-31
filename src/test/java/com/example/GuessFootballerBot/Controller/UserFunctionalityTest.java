@@ -25,6 +25,11 @@ class UserFunctionalityTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     *  тест перевіряє, що метод updateUser()
+     *  коректно оновлює користувача, якщо користувач існує. Перевіряється,
+     *  чи викликано методи existsByChatId() та findByChatId() з вірними аргументами, чи оновлено кількість очок користувача та чи викликано метод save() для збереження оновленого користувача
+     */
     @Test
     void testUpdateUser_UserExists() {
         Long chatId = 123456L;
@@ -43,6 +48,10 @@ class UserFunctionalityTest {
         verify(userService).save(existingUser);
     }
 
+    /**
+     * тест перевіряє, що метод updateUser() не робить жодних змін, якщо користувач не існує. Перевіряється, чи викликано метод existsByChatId()
+     * з вірним аргументом та чи не викликано методи findByChatId() та save()
+     */
     @Test
     void testUpdateUser_UserDoesNotExist() {
         Long chatId = 123456L;
@@ -56,6 +65,10 @@ class UserFunctionalityTest {
         verify(userService, never()).save(any(User.class));
     }
 
+    /**
+     * тест перевіряє, що метод saveUser() створює нового користувача і зберігає його, якщо користувач не існує. Перевіряється, чи викликано метод existsByChatId() з вірним аргументом
+     * та чи викликано метод save() для збереження нового користувача.
+     */
     @Test
     void testSaveUser_UserDoesNotExist() {
         Long chatId = 123456L;
@@ -74,6 +87,10 @@ class UserFunctionalityTest {
         verify(userService).save(newUser);
     }
 
+    /**
+     * тест перевіряє, що метод saveUser() не створює нового користувача і не зберігає його, якщо користувач вже існує. Перевіряється, чи викликано метод
+     * existsByChatId() з вірним аргументом та чи не викликано метод save()
+     */
     @Test
     void testSaveUser_UserExists() {
         Long chatId = 123456L;
@@ -87,6 +104,10 @@ class UserFunctionalityTest {
         verify(userService, never()).save(any(User.class));
     }
 
+    /**
+     * тест перевіряє, що метод infoUser() повертає правильне повідомлення з інформацією про користувача, якщо користувач існує. Перевіряється, чи викликано метод existsByChatId() з вірним аргументом, чи викликано метод findByChatId() з вірним аргументом, чи повернуто очікуване повідомлення
+     * та чи викликано метод findByChatId() для збереження нового користувача.
+     */
     @Test
     void testInfoUser_UserExists() {
         Long chatId = 123456L;
@@ -110,6 +131,10 @@ class UserFunctionalityTest {
         verify(userService).findByChatId(chatId);
     }
 
+    /**
+     *  тест перевіряє, що метод infoUser() повертає правильне повідомлення з інформацією про користувача, якщо користувач не існує.
+     *  Перевіряється, чи викликано метод existsByChatId() з вірним аргументом, чи повернуто очікуване повідомлення та чи викликано метод save() для збереження нового користувача.
+     */
     @Test
     void testInfoUser_UserDoesNotExist() {
         Long chatId = 123456L;

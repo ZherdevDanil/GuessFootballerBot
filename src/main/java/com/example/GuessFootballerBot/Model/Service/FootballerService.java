@@ -20,6 +20,7 @@ public class FootballerService {
 
     /**
      * метод повертає кількість полів в таблиці FootballerDb
+     * @return
      */
     public long count() {
         try {
@@ -33,6 +34,8 @@ public class FootballerService {
 
     /**
      * метод зберігає List об'єктами класу Footballer в бд FootballerDB
+     * @param footballers
+     * @return
      */
 
     public Iterable<Footballer> saveAll(List<Footballer> footballers) {
@@ -41,6 +44,8 @@ public class FootballerService {
 
     /**
      * Реалізація методу з інтерфейсу FootballerRepository
+     * @param randomId
+     * @return
      */
     public Optional<Footballer> findById(Integer randomId) {
         try {

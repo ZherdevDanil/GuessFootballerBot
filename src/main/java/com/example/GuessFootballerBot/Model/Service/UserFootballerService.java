@@ -22,6 +22,8 @@ public class UserFootballerService {
 
     /**
      * Метод додає в таблицю chatId та footballerId
+     * @param chatId
+     * @param footballerId
      */
     public void addUserFootballer(Long chatId, Integer footballerId) {
         try {
@@ -38,6 +40,8 @@ public class UserFootballerService {
 
     /**
      * Метод повертає список з footballerId певного користувача за його chatId
+     * @param chatId
+     * @return
      */
     public List<Integer> findUserFootballersByChatId(Long chatId) {
         try {
@@ -50,6 +54,7 @@ public class UserFootballerService {
 
     /**
      * Метод дозволяє видаляти поля в таблиці
+     * @param chatId
      */
     @Transactional
     public void deleteRowsByChatId(Long chatId) {
