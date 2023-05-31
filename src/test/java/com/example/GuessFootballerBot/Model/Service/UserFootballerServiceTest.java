@@ -15,6 +15,9 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
+/**
+ * Клас, що тестує методи класу UserFootballerService
+ */
 class UserFootballerServiceTest {
 
     @Mock

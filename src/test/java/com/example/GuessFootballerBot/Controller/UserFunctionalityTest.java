@@ -12,6 +12,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import static org.mockito.Mockito.*;
 
+/**
+ * клас,що тестує методи класу UserFunctionality
+ */
 class UserFunctionalityTest {
 
     @Mock

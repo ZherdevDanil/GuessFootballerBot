@@ -15,6 +15,9 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
+/**
+ * Клас, що тестує методи класу FootballerService
+ */
 class FootballerServiceTest {
 
     @Mock

@@ -16,6 +16,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+/**
+ * клас, що тестує методи класу FootballerFunctionality
+ */
 @SpringBootTest
 class FootballerFunctionalityTest {
 

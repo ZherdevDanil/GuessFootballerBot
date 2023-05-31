@@ -13,6 +13,9 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
+/**
+ * клас, що тестує методи класу UserService
+ */
 public class UserServiceTest {
 
     @Mock
