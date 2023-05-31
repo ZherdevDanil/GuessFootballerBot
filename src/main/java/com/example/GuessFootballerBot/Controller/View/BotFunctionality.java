@@ -468,8 +468,8 @@ public class BotFunctionality extends TelegramLongPollingBot {
     }
 
     /**
-     *  метод перевіряє чи нажмималася одна і та сама кнопка декілька разів, якщо кнопка нажата вперше,
-     *      * тоз користувача знімаютсья очки, якщо ні, то очки не змінаються
+     *  метод перевіряє чи нажималася одна і та сама кнопка декілька разів, якщо кнопка нажата вперше,
+     *   то з користувача знімаютсья очки, якщо ні, то очки не знімаються
      *
      * @param i
      * @param countOfPoint
@@ -481,8 +481,8 @@ public class BotFunctionality extends TelegramLongPollingBot {
         }
     }
     /**
-     *  метод перевіряє чи нажмималася одна і та сама кнопка декілька разів, якщо кнопка нажата вперше,
-     *      * тоз користувача знімаютсья очки, якщо ні, то очки не змінаються
+     *  метод перевіряє чи нажмималася одна і та сама кнопка декілька разів в розділі Клуб, якщо кнопка нажата вперше,
+     * то з користувача знімаютсья очки, якщо ні, то очки не змінаються
      *
      * @param i
      * @param countOfPoint
@@ -515,7 +515,7 @@ public class BotFunctionality extends TelegramLongPollingBot {
     }
 
     /**
-     * Method for importing data from the footballer_data.json file into the FootballerDb database
+     * метод для  імпорту даних із файлу footballer_data.json до таблиці FootballerDb
      */
 
 

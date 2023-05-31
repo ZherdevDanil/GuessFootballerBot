@@ -50,7 +50,7 @@ public class FootballerFunctionality {
     }
 
     /**
-     * Метод генераю випадкове id в діапазоні [1,51], кількість футболістів в таблиці 51
+     * Метод генерує випадкове id в діапазоні [1,51], кількість футболістів в таблиці 51
      * @return
      */
     public int genereateRandomFootballerId() {

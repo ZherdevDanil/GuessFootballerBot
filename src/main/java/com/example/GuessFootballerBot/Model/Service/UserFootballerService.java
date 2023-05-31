@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Сервіс клас, що реалізує методи в UserFootballerRepository для подольшої роботи з ними в контроллерах
+ * Сервіс клас, що реалізує методи в UserFootballerRepository для подальшої роботи з ними в контроллерах
  */
 @Service
 public class UserFootballerService {

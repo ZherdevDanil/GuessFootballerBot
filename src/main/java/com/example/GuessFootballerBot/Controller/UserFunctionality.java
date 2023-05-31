@@ -22,7 +22,7 @@ public class UserFunctionality {
     }
 
     /**
-     * Метод оновляє дані в таблиці, додає points юзеру в таблиці UserDb
+     * Метод оновлює дані в таблиці, додає points юзеру в таблиці UserDb
      * @param chatId
      * @param points
      */
