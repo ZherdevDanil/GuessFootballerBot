@@ -287,30 +287,4 @@ public class FootballerFunctionality {
         message.setText(currentFootballerClubs8);
         return message;
     }
-
-    /**
-     * метод повертає список з 3 юзерів з найбільшою кількістю points
-     * @param chatId
-     * @return
-     */
-    public List<SendMessage> getTopPlayers(Long chatId) {
-        List<User> topusers = userFunctionality.getUserService().getTopUsers();
-        List<SendMessage> messages = new ArrayList<>();
-        SendMessage message1 = new SendMessage();
-        message1.setChatId(chatId);
-        message1.setText("Топ 3 гравці : ");
-        messages.add(message1);
-
-        for (int i = 0; i < topusers.size(); i++) {
-            User user = topusers.get(i);
-            SendMessage message = new SendMessage();
-            message.setChatId(chatId);
-            message.setText(user.getUserName() + ": " + user.getPoints());
-            messages.add(message);
-
-        }
-        return messages;
-    }
-
-
 }

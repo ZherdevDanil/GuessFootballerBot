@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * клас, що є контроллером, отримає інформацію, та або оновлює таблицю User,
  * або бере дані з таблиці User та передає в view для їх виводу
@@ -99,5 +102,28 @@ public class UserFunctionality {
             throw new RuntimeException("Не вдалося отримати та обобити інформацію", e);
         }
 
+    }
+    /**
+     * метод повертає список з 3 юзерів з найбільшою кількістю points
+     * @param chatId
+     * @return
+     */
+    public List<SendMessage> getTopPlayers(Long chatId) {
+        List<User> topusers = userService.getTopUsers();
+        List<SendMessage> messages = new ArrayList<>();
+        SendMessage message1 = new SendMessage();
+        message1.setChatId(chatId);
+        message1.setText("Топ 3 гравці : ");
+        messages.add(message1);
+
+        for (int i = 0; i < topusers.size(); i++) {
+            User user = topusers.get(i);
+            SendMessage message = new SendMessage();
+            message.setChatId(chatId);
+            message.setText(user.getUserName() + ": " + user.getPoints());
+            messages.add(message);
+
+        }
+        return messages;
     }
 }

@@ -47,7 +47,7 @@ public class BotFunctionality extends TelegramLongPollingBot {
     private int numberOfClubsCurrentPlayer;
     List<BotCommand> commands = List.of(
             new BotCommand("/start", "start bot"),
-            new BotCommand("/help", "game rules"),
+            new BotCommand("/rules", "game rules"),
             new BotCommand("/possiblefootballer", "list_of_footballers")
     );
 
@@ -122,7 +122,7 @@ public class BotFunctionality extends TelegramLongPollingBot {
             sendDoc(chatId, new File("C:\\GuessFootballerBot\\footballerhelp.pdf"), "Список можливих футболістів");
         } else if (messageText.equals("/my_data") || messageText.equals("my_data")) {
             executeSendMessege(userFunctionality.infoUser(chatId, Username));
-        } else if (messageText.equals("/help") || messageText.equals("help")) {
+        } else if (messageText.equals("/rules") || messageText.equals("rules")) {
             sendrules(chatId);
         } else if (messageText.equals("/play") || messageText.equals("play")) {
             System.out.println(Arrays.toString(counterForButtons));
@@ -147,8 +147,8 @@ public class BotFunctionality extends TelegramLongPollingBot {
                     "8.Повернутися назад\n");
             executeSendMessege(message);
         } else if (messageText.equals("/Rating") || messageText.equals("Rating")) {
-            for (int i = 0; i < footballerFunctionality.getTopPlayers(chatId).size(); i++) {
-                executeSendMessege(footballerFunctionality.getTopPlayers(chatId).get(i));
+            for (int i = 0; i < userFunctionality.getTopPlayers(chatId).size(); i++) {
+                executeSendMessege(userFunctionality.getTopPlayers(chatId).get(i));
             }
         } else if (messageText.equals("/1") || messageText.equals("1")) {
             executeSendMessege(footballerFunctionality.getFootballerPosition(chatId, footballerFunctionality.getCurrentFootballer()));
@@ -320,7 +320,7 @@ public class BotFunctionality extends TelegramLongPollingBot {
 
         KeyboardRow row = new KeyboardRow();
 
-        row.add("help");
+        row.add("rules");
         row.add("play");
         keyboardRows.add(row);
         row = new KeyboardRow();
