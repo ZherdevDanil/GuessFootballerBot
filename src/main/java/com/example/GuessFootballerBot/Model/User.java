@@ -5,7 +5,7 @@ import jakarta.persistence.Id;
 import lombok.Data;
 
 /**
- * База даних UserDb
+ * Entity клас, що є таблицею UserDb
  */
 @Data
 @Entity(name = "UserDb")

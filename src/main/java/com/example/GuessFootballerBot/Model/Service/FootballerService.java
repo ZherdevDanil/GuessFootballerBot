@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Сервіс клас, що є прослойкою між таблицею та контроллером, реалізують методи що є в Repository класі FootballerRepository для подальшого використання їх в Контроллерах
+ */
 @Service
 public class FootballerService {
 

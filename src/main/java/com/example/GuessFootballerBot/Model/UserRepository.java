@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * Інтерфейс UserRepository наслідує інтерфейс CrudRepository (Create Read Update Delete) для
- * отримання методів роботи з бд User
+ * отримання методів роботи з таблицею User
  */
 
 @Repository

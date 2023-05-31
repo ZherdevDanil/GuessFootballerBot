@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository клас, що дозволяє виконувати запити з таблиці UserFootballer
+ */
 @Repository
 public interface UserFootballerRepository extends CrudRepository<UserFootballer, Integer> {
 

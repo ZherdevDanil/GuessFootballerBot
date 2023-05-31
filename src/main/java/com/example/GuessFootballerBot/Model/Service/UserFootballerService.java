@@ -1,15 +1,16 @@
 package com.example.GuessFootballerBot.Model.Service;
 
-import com.example.GuessFootballerBot.Config.BotConfiguration;
 import com.example.GuessFootballerBot.Model.UserFootballer;
 import com.example.GuessFootballerBot.Model.UserFootballerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Сервіс клас, що реалізує методи в UserFootballerRepository для подольшої роботи з ними в контроллерах
+ */
 @Service
 public class UserFootballerService {
 

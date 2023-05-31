@@ -5,7 +5,7 @@ import jakarta.persistence.Id;
 import lombok.Data;
 
 /**
- * Таблиця з футболістами FootballerDb
+ * Entity Клас що є таблицею з футболістами FootballerDb
  */
 @Data
 @Entity(name = "FootballerDb")

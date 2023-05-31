@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 /**
- * Repository клас що дозволяє робити деякі запити з бд
+ * Repository клас що дозволяє робити деякі запити з таблиці Footballer
  */
 @Repository
 public interface FootballerRepository extends CrudRepository<Footballer, Integer> {

@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Клас для реалізації методів з UserRepository
+ * Сервіс клас що реалізає методи з UserRepository для подальшої роботи з ними в контроллерах
  */
 @Service
 public class UserService {

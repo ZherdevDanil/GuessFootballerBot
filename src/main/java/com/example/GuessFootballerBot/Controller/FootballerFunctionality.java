@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-
+/**
+ * Клас, що є контроллером, отримує дані з бази даних, та оброблює їх
+ */
 @Component
 public class FootballerFunctionality {
     private UserFunctionality userFunctionality;

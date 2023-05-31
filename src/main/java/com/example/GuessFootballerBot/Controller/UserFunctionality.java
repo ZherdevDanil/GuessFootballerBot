@@ -7,6 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
+/**
+ * клас, що є контроллером, отримає інформацію, та або оновлює таблицю User,
+ * або бере дані з таблиці User та передає в view для їх виводу
+ */
 @Component
 public class UserFunctionality {
     @Autowired
